@@ -24,7 +24,10 @@ app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'dev-secret-key-change-i
 app.config['JWT_SECRET_KEY'] = os.environ.get('JWT_SECRET_KEY', 'jwt-secret-change-in-production')
 app.config['JWT_ACCESS_TOKEN_EXPIRES'] = timedelta(hours=1)
 app.config['JWT_REFRESH_TOKEN_EXPIRES'] = timedelta(days=30)
-app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL', 'sqlite:///contentqueue.db')
+database_url = os.environ.get('DATABASE_URL', 'sqlite:///contentqueue.db')
+if database_url.startswith('postgres://'):
+    database_url = database_url.replace('postgres://', 'postgresql://', 1)
+app.config['SQLALCHEMY_DATABASE_URI'] = database_url
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 # Stripe configuration
@@ -438,6 +441,11 @@ def init_db():
     with app.app_context():
         db.create_all()
         print("Database initialized!")
+
+# Initialize DB on Railway/Gunicorn startup too
+with app.app_context():
+    db.create_all()
+
 
 if __name__ == '__main__':
     init_db()
