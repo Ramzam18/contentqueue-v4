@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign In - Content Queue</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@400;600;700&family=Space+Mono:wght@400;700&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        :root {
+            --cream: #fef9f3;
+            --dark: #1a1614;
+            --accent: #ff6b9d;
+            --green: #34d399;
+            --red: #ef4444;
+        }
+        
+        body {
+            font-family: 'Crimson Pro', serif;
+            background: var(--cream);
+            color: var(--dark);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 400px;
+            width: 100%;
+        }
+        
+        .logo {
+            text-align: center;
+            font-size: 36px;
+            font-weight: 700;
+            letter-spacing: -1px;
+            margin-bottom: 40px;
+        }
+        
+        .form-card {
+            background: white;
+            border: 2px solid var(--dark);
+            border-radius: 20px;
+            padding: 40px;
+        }
+        
+        .tabs {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 32px;
+        }
+        
+        .tab {
+            flex: 1;
+            padding: 12px;
+            background: var(--cream);
+            border: 2px solid var(--dark);
+            border-radius: 10px;
+            font-family: 'Space Mono', monospace;
+            font-size: 14px;
+            font-weight: 700;
+            text-transform: uppercase;
+            cursor: pointer;
+            text-align: center;
+        }
+        
+        .tab.active {
+            background: var(--dark);
+            color: white;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-label {
+            display: block;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+        
+        .form-input {
+            width: 100%;
+            padding: 14px;
+            background: var(--cream);
+            border: 2px solid #e5d5c5;
+            border-radius: 10px;
+            font-family: 'Crimson Pro', serif;
+            font-size: 16px;
+        }
+        
+        .form-input:focus {
+            outline: none;
+            border-color: var(--accent);
+        }
+        
+        .submit-btn {
+            width: 100%;
+            padding: 16px;
+            background: var(--accent);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-family: 'Space Mono', monospace;
+            font-size: 14px;
+            font-weight: 700;
+            text-transform: uppercase;
+            cursor: pointer;
+        }
+        
+        .submit-btn:hover {
+            background: #ff5588;
+        }
+        
+        .submit-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        .error {
+            background: #fef2f2;
+            border: 2px solid var(--red);
+            color: var(--red);
+            padding: 12px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+        
+        .success {
+            background: #f0fdf4;
+            border: 2px solid var(--green);
+            color: var(--green);
+            padding: 12px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+        
+        .form-view {
+            display: none;
+        }
+        
+        .form-view.active {
+            display: block;
+        }
+        
+        .back-link {
+            text-align: center;
+            margin-top: 24px;
+        }
+        
+        .back-link a {
+            color: var(--accent);
+            text-decoration: none;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="logo">CONTENT QUEUE</div>
+        
+        <div class="form-card">
+            <div class="tabs">
+                <div class="tab active" onclick="switchForm('login')">Sign In</div>
+                <div class="tab" onclick="switchForm('signup')">Sign Up</div>
+            </div>
+            
+            <div id="error" class="error" style="display:none;"></div>
+            <div id="success" class="success" style="display:none;"></div>
+            
+            <!-- Login Form -->
+            <div id="loginForm" class="form-view active">
+                <form onsubmit="handleLogin(event)">
+                    <div class="form-group">
+                        <label class="form-label">Email</label>
+                        <input type="email" class="form-input" id="loginEmail" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Password</label>
+                        <input type="password" class="form-input" id="loginPassword" required>
+                    </div>
+                    <button type="submit" class="submit-btn" id="loginBtn">Sign In</button>
+                </form>
+            </div>
+            
+            <!-- Signup Form -->
+            <div id="signupForm" class="form-view">
+                <form onsubmit="handleSignup(event)">
+                    <div class="form-group">
+                        <label class="form-label">Email</label>
+                        <input type="email" class="form-input" id="signupEmail" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Password (min 8 characters)</label>
+                        <input type="password" class="form-input" id="signupPassword" minlength="8" required>
+                    </div>
+                    <button type="submit" class="submit-btn" id="signupBtn">Start Free Trial</button>
+                    <p style="font-size: 13px; opacity: 0.6; margin-top: 12px; text-align: center;">14-day free trial. No credit card required.</p>
+                </form>
+            </div>
+        </div>
+        
+        <div class="back-link">
+            <a href="/">← Back to home</a>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = window.location.origin;
+        
+        function switchForm(form) {
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.form-view').forEach(v => v.classList.remove('active'));
+            
+            if (form === 'login') {
+                document.querySelectorAll('.tab')[0].classList.add('active');
+                document.getElementById('loginForm').classList.add('active');
+            } else {
+                document.querySelectorAll('.tab')[1].classList.add('active');
+                document.getElementById('signupForm').classList.add('active');
+            }
+            
+            hideError();
+            hideSuccess();
+        }
+        
+        function showError(message) {
+            const errorDiv = document.getElementById('error');
+            errorDiv.textContent = message;
+            errorDiv.style.display = 'block';
+        }
+        
+        function hideError() {
+            document.getElementById('error').style.display = 'none';
+        }
+        
+        function showSuccess(message) {
+            const successDiv = document.getElementById('success');
+            successDiv.textContent = message;
+            successDiv.style.display = 'block';
+        }
+        
+        function hideSuccess() {
+            document.getElementById('success').style.display = 'none';
+        }
+        
+        async function handleLogin(e) {
+            e.preventDefault();
+            hideError();
+            
+            const btn = document.getElementById('loginBtn');
+            btn.disabled = true;
+            btn.textContent = 'Signing in...';
+            
+            try {
+                const response = await fetch(`${API_URL}/api/auth/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        email: document.getElementById('loginEmail').value,
+                        password: document.getElementById('loginPassword').value
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (!response.ok) {
+                    throw new Error(data.error || 'Login failed');
+                }
+                
+                // Store tokens
+                localStorage.setItem('access_token', data.access_token);
+                localStorage.setItem('refresh_token', data.refresh_token);
+                localStorage.setItem('user', JSON.stringify(data.user));
+                
+                // Redirect to app
+                window.location.href = '/app';
+                
+            } catch (error) {
+                showError(error.message);
+                btn.disabled = false;
+                btn.textContent = 'Sign In';
+            }
+        }
+        
+        async function handleSignup(e) {
+            e.preventDefault();
+            hideError();
+            
+            const btn = document.getElementById('signupBtn');
+            btn.disabled = true;
+            btn.textContent = 'Creating account...';
+            
+            try {
+                const response = await fetch(`${API_URL}/api/auth/signup`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        email: document.getElementById('signupEmail').value,
+                        password: document.getElementById('signupPassword').value
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (!response.ok) {
+                    throw new Error(data.error || 'Signup failed');
+                }
+                
+                // Store tokens
+                localStorage.setItem('access_token', data.access_token);
+                localStorage.setItem('refresh_token', data.refresh_token);
+                localStorage.setItem('user', JSON.stringify(data.user));
+                
+                // Redirect to app
+                window.location.href = '/app';
+                
+            } catch (error) {
+                showError(error.message);
+                btn.disabled = false;
+                btn.textContent = 'Start Free Trial';
+            }
+        }
+        
+        // Check if already logged in
+        if (localStorage.getItem('access_token')) {
+            window.location.href = '/app';
+        }
+    </script>
+</body>
+</html>

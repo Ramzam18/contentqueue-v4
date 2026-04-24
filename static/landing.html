@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Content Queue - Never Miss a Post Again</title>
+    <meta name="description" content="The smart posting schedule for OnlyFans creators. Manage all your platforms in one place.">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@400;600;700&family=Space+Mono:wght@400;700&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        :root {
+            --cream: #fef9f3;
+            --dark: #1a1614;
+            --accent: #ff6b9d;
+            --green: #34d399;
+        }
+        
+        body {
+            font-family: 'Crimson Pro', serif;
+            background: var(--cream);
+            color: var(--dark);
+        }
+        
+        .header {
+            padding: 20px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid var(--dark);
+        }
+        
+        .logo {
+            font-size: 28px;
+            font-weight: 700;
+            letter-spacing: -1px;
+        }
+        
+        .cta-btn {
+            padding: 12px 32px;
+            background: var(--accent);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-family: 'Space Mono', monospace;
+            font-size: 14px;
+            font-weight: 700;
+            text-transform: uppercase;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+        }
+        
+        .cta-btn:hover {
+            background: #ff5588;
+        }
+        
+        .hero {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 100px 40px;
+            text-align: center;
+        }
+        
+        .hero h1 {
+            font-size: 64px;
+            font-weight: 700;
+            letter-spacing: -3px;
+            margin-bottom: 24px;
+            line-height: 1.1;
+        }
+        
+        .hero p {
+            font-size: 24px;
+            opacity: 0.8;
+            margin-bottom: 40px;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        .trial-badge {
+            display: inline-block;
+            padding: 8px 20px;
+            background: var(--green);
+            color: white;
+            border-radius: 20px;
+            font-family: 'Space Mono', monospace;
+            font-size: 14px;
+            font-weight: 700;
+            margin-bottom: 32px;
+        }
+        
+        .features {
+            max-width: 1200px;
+            margin: 80px auto;
+            padding: 0 40px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 40px;
+        }
+        
+        .feature {
+            text-align: center;
+        }
+        
+        .feature-icon {
+            font-size: 48px;
+            margin-bottom: 16px;
+        }
+        
+        .feature h3 {
+            font-size: 24px;
+            margin-bottom: 12px;
+        }
+        
+        .feature p {
+            opacity: 0.8;
+            font-size: 18px;
+        }
+        
+        .social-proof {
+            max-width: 800px;
+            margin: 80px auto;
+            padding: 60px 40px;
+            background: white;
+            border: 2px solid var(--dark);
+            border-radius: 20px;
+            text-align: center;
+        }
+        
+        .social-proof h2 {
+            font-size: 36px;
+            margin-bottom: 32px;
+        }
+        
+        .stats {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 40px;
+        }
+        
+        .stat-value {
+            font-size: 48px;
+            font-weight: 700;
+            color: var(--accent);
+        }
+        
+        .stat-label {
+            font-family: 'Space Mono', monospace;
+            font-size: 14px;
+            text-transform: uppercase;
+            opacity: 0.6;
+        }
+        
+        .pricing {
+            max-width: 400px;
+            margin: 80px auto;
+            padding: 40px;
+            background: var(--dark);
+            color: white;
+            border-radius: 20px;
+            text-align: center;
+        }
+        
+        .pricing h2 {
+            font-size: 32px;
+            margin-bottom: 20px;
+        }
+        
+        .price {
+            font-size: 64px;
+            font-weight: 700;
+            margin: 20px 0;
+        }
+        
+        .price span {
+            font-size: 24px;
+            opacity: 0.8;
+        }
+        
+        .pricing ul {
+            list-style: none;
+            margin: 32px 0;
+            text-align: left;
+        }
+        
+        .pricing li {
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.2);
+        }
+        
+        .pricing li::before {
+            content: '✓ ';
+            color: var(--green);
+            font-weight: 700;
+            margin-right: 8px;
+        }
+        
+        .footer {
+            max-width: 1200px;
+            margin: 80px auto 40px;
+            padding: 40px;
+            text-align: center;
+            border-top: 2px solid var(--dark);
+        }
+        
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 42px;
+            }
+            
+            .hero p {
+                font-size: 18px;
+            }
+            
+            .features {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="logo">CONTENT QUEUE</div>
+        <a href="/login" class="cta-btn">Start Free Trial</a>
+    </div>
+
+    <div class="hero">
+        <div class="trial-badge">14-Day Free Trial • No Credit Card Required</div>
+        <h1>Never Miss a Post Again</h1>
+        <p>The smart posting schedule for OnlyFans creators managing multiple platforms</p>
+        <a href="/login" class="cta-btn" style="font-size: 16px; padding: 16px 48px;">Get Started Free →</a>
+    </div>
+
+    <div class="features">
+        <div class="feature">
+            <div class="feature-icon">⏰</div>
+            <h3>Real-Time Queue</h3>
+            <p>See exactly what to post now and what's coming up next. Auto-advances as you complete tasks.</p>
+        </div>
+        
+        <div class="feature">
+            <div class="feature-icon">📱</div>
+            <h3>All Platforms</h3>
+            <p>Manage Instagram, TikTok, Twitter, Snapchat, OnlyFans, and Fansly in one place.</p>
+        </div>
+        
+        <div class="feature">
+            <div class="feature-icon">🎯</div>
+            <h3>Smart Templates</h3>
+            <p>Pre-built posting schedules optimized for maximum engagement and revenue.</p>
+        </div>
+        
+        <div class="feature">
+            <div class="feature-icon">📊</div>
+            <h3>Track Everything</h3>
+            <p>See completion rates, missed posts, and stay consistent with automatic tracking.</p>
+        </div>
+        
+        <div class="feature">
+            <div class="feature-icon">🌍</div>
+            <h3>Works Anywhere</h3>
+            <p>Mobile-optimized PWA works offline. Manage your schedule from Bangkok, Bali, or anywhere.</p>
+        </div>
+        
+        <div class="feature">
+            <div class="feature-icon">✨</div>
+            <h3>Never Forget</h3>
+            <p>Automatic reminders and missed task tracking so you never lose engagement.</p>
+        </div>
+    </div>
+
+    <div class="social-proof">
+        <h2>"Finally, a tool that actually understands creator workflows"</h2>
+        <p style="font-size: 18px; opacity: 0.8; margin-top: 16px;">Built by creators, for creators. No complicated calendars. No confusing timezones. Just a simple queue that tells you what to post right now.</p>
+        
+        <div class="stats">
+            <div>
+                <div class="stat-value">6</div>
+                <div class="stat-label">Platforms</div>
+            </div>
+            <div>
+                <div class="stat-value">100%</div>
+                <div class="stat-label">Mobile Ready</div>
+            </div>
+            <div>
+                <div class="stat-value">0</div>
+                <div class="stat-label">Missed Posts</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="pricing">
+        <h2>Simple Pricing</h2>
+        <div class="price">$39<span>/mo</span></div>
+        <ul>
+            <li>All platforms included</li>
+            <li>Unlimited posts</li>
+            <li>Real-time queue</li>
+            <li>Smart templates</li>
+            <li>Analytics & tracking</li>
+            <li>Mobile PWA</li>
+            <li>Priority support</li>
+        </ul>
+        <a href="/login" class="cta-btn" style="width: 100%; padding: 16px; margin-top: 20px;">Start 14-Day Free Trial</a>
+        <p style="font-size: 14px; opacity: 0.6; margin-top: 16px;">No credit card required. Cancel anytime.</p>
+    </div>
+
+    <div class="footer">
+        <p>&copy; 2026 Content Queue. Built for creators who mean business.</p>
+        <p style="margin-top: 12px; opacity: 0.6;">Questions? Email hello@contentqueue.app</p>
+    </div>
+</body>
+</html>
