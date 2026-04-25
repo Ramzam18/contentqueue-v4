@@ -450,3 +450,12 @@ with app.app_context():
 if __name__ == '__main__':
     init_db()
     app.run(host='0.0.0.0', port=5555, debug=False)
+
+@app.route('/init-db')
+def init_database():
+    """Initialize database tables - call this once after deployment"""
+    try:
+        db.create_all()
+        return jsonify({'status': 'success', 'message': 'Database tables created!'}), 200
+    except Exception as e:
+        return jsonify({'status': 'error', 'message': str(e)}), 500
