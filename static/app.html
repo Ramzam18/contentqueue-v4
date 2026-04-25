@@ -447,8 +447,9 @@
 <body>
     <div class="header">
         <div class="app-title">CONTENT QUEUE</div>
-        <div class="app-subtitle">v3.4 - Missed Tracking & Lives</div>
+        <div class="app-subtitle">v4.0 - Production</div>
         <div class="current-time" id="currentTime">--:-- -- EST</div>
+        <button onclick="logout()" style="position: absolute; top: 20px; right: 20px; padding: 8px 16px; background: var(--dark); color: white; border: none; border-radius: 8px; font-family: 'Space Mono', monospace; font-size: 12px; cursor: pointer;">Logout</button>
     </div>
 
     <div class="tab-nav">
@@ -641,7 +642,36 @@
     </div>
 
     <script>
-        const SYNC_URL = 'http://100.120.222.12:5555/sync';
+        // Railway backend API
+        const API_BASE = window.location.origin;
+        const API_URL = `${API_BASE}/api`;
+        
+        // Get JWT token from localStorage
+        function getAuthHeaders() {
+            const token = localStorage.getItem('access_token');
+            return {
+                'Content-Type': 'application/json',
+                'Authorization': token ? `Bearer ${token}` : ''
+            };
+        }
+        
+        // Check authentication on page load
+        function checkAuth() {
+            const token = localStorage.getItem('access_token');
+            if (!token) {
+                window.location.href = '/app';  // Redirect to login
+                return false;
+            }
+            return true;
+        }
+        
+        // Logout function
+        function logout() {
+            localStorage.removeItem('access_token');
+            localStorage.removeItem('refresh_token');
+            localStorage.removeItem('user');
+            window.location.href = '/app';
+        }
         
         const PLATFORM_COLORS = {
             snapchat: '#FFFC00',
@@ -791,14 +821,32 @@
         }
 
         async function loadData() {
+            if (!checkAuth()) return;
+            
             try {
-                const response = await fetch(SYNC_URL);
-                const data = await response.json();
-                if (data.weeklyTasks) weeklyTasks = data.weeklyTasks;
-                if (data.completedTasks) completedTasks = data.completedTasks;
-                if (data.enabledPlatforms) enabledPlatforms = data.enabledPlatforms;
+                // Load schedule
+                const scheduleResponse = await fetch(`${API_URL}/schedule`, {
+                    headers: getAuthHeaders()
+                });
+                
+                if (scheduleResponse.ok) {
+                    const scheduleData = await scheduleResponse.json();
+                    if (scheduleData.weeklyTasks) weeklyTasks = scheduleData.weeklyTasks;
+                    if (scheduleData.enabledPlatforms) enabledPlatforms = scheduleData.enabledPlatforms;
+                }
+                
+                // Load completed tasks
+                const tasksResponse = await fetch(`${API_URL}/tasks/completed`, {
+                    headers: getAuthHeaders()
+                });
+                
+                if (tasksResponse.ok) {
+                    const tasksData = await tasksResponse.json();
+                    if (tasksData.completedTasks) completedTasks = tasksData.completedTasks;
+                }
+                
             } catch (e) {
-                console.log('Using local data');
+                console.error('Error loading data:', e);
             }
             
             // Initialize empty days if needed
@@ -811,20 +859,21 @@
         }
 
         async function saveData() {
-            const data = {
-                weeklyTasks,
-                completedTasks,
-                enabledPlatforms,
-                lastSync: new Date().toISOString()
-            };
+            if (!checkAuth()) return;
             
             try {
-                await fetch(SYNC_URL, {
+                // Save schedule
+                await fetch(`${API_URL}/schedule`, {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(data)
+                    headers: getAuthHeaders(),
+                    body: JSON.stringify({
+                        weeklyTasks,
+                        enabledPlatforms
+                    })
                 });
-            } catch (e) {}
+            } catch (e) {
+                console.error('Error saving data:', e);
+            }
         }
 
         function updatePlatformCheckboxes() {
@@ -1077,7 +1126,23 @@
                 missed: true,
                 timestamp: new Date().toISOString()
             };
-            await saveData();
+            
+            // Save to backend
+            try {
+                await fetch(`${API_URL}/tasks/complete`, {
+                    method: 'POST',
+                    headers: getAuthHeaders(),
+                    body: JSON.stringify({
+                        date_key: dateKey,
+                        task_id: taskId,
+                        completed: false,
+                        missed: true
+                    })
+                });
+            } catch (e) {
+                console.error('Error saving task:', e);
+            }
+            
             renderQueue();
             updateStats();
         }
@@ -1161,7 +1226,23 @@
                 completed: true,
                 timestamp: new Date().toISOString()
             };
-            await saveData();
+            
+            // Save to backend
+            try {
+                await fetch(`${API_URL}/tasks/complete`, {
+                    method: 'POST',
+                    headers: getAuthHeaders(),
+                    body: JSON.stringify({
+                        date_key: dateKey,
+                        task_id: taskId,
+                        completed: true,
+                        missed: false
+                    })
+                });
+            } catch (e) {
+                console.error('Error saving task:', e);
+            }
+            
             renderQueue();
             updateStats();
         }
