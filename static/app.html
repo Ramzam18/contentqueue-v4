@@ -659,7 +659,7 @@
         function checkAuth() {
             const token = localStorage.getItem('access_token');
             if (!token) {
-                window.location.href = '/app';  // Redirect to login
+                window.location.href = '/login';  // Redirect to login
                 return false;
             }
             return true;
@@ -670,7 +670,7 @@
             localStorage.removeItem('access_token');
             localStorage.removeItem('refresh_token');
             localStorage.removeItem('user');
-            window.location.href = '/app';
+            window.location.href = '/login';
         }
         
         const PLATFORM_COLORS = {

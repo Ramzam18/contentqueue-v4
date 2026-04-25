@@ -420,12 +420,13 @@ def serve_landing():
 
 @app.route('/login')
 def serve_login():
+    """Serve login/signup page"""
     return send_file('static/login.html')
 
 @app.route('/app')
 @app.route('/app/')
 def serve_app():
-    """Serve main app (after login)"""
+    """Serve main app (requires auth)"""
     return send_file('static/app.html')
 
 @app.route('/health')
