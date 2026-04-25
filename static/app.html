@@ -1,0 +1,1445 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>Content Queue</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@400;600;700&family=Space+Mono:wght@400;700&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        :root {
+            --cream: #fef9f3;
+            --dark: #1a1614;
+            --accent: #ff6b9d;
+            --green: #34d399;
+            --orange: #fb923c;
+            --border: #e5d5c5;
+            --blue: #60a5fa;
+        }
+        
+        body {
+            font-family: 'Crimson Pro', serif;
+            background: var(--cream);
+            color: var(--dark);
+            min-height: 100vh;
+            padding: 20px 20px 100px;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 24px;
+            padding-bottom: 16px;
+            border-bottom: 2px solid var(--dark);
+        }
+        
+        .app-title {
+            font-size: 36px;
+            font-weight: 700;
+            letter-spacing: -1.5px;
+            margin-bottom: 4px;
+        }
+        
+        .app-subtitle {
+            font-family: 'Space Mono', monospace;
+            font-size: 11px;
+            color: #999;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .current-time {
+            font-family: 'Space Mono', monospace;
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--accent);
+            margin: 12px 0;
+        }
+        
+        .tab-nav {
+            display: flex;
+            gap: 8px;
+            justify-content: center;
+            margin-bottom: 24px;
+            overflow-x: auto;
+        }
+        
+        .tab-btn {
+            padding: 10px 24px;
+            background: white;
+            border: 2px solid var(--dark);
+            border-radius: 10px;
+            font-family: 'Space Mono', monospace;
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            text-transform: uppercase;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+        
+        .tab-btn.active {
+            background: var(--dark);
+            color: white;
+        }
+        
+        .view {
+            display: none;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        
+        .view.active {
+            display: block;
+        }
+        
+        /* QUEUE VIEW */
+        .queue-section {
+            margin-bottom: 32px;
+        }
+        
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+        
+        .section-title {
+            font-size: 24px;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+        }
+        
+        .section-count {
+            font-family: 'Space Mono', monospace;
+            font-size: 14px;
+            color: var(--accent);
+            font-weight: 700;
+        }
+        
+        .task-card {
+            background: white;
+            border: 2px solid var(--border);
+            border-left: 6px solid var(--platform-color);
+            border-radius: 14px;
+            padding: 18px;
+            margin-bottom: 12px;
+            position: relative;
+        }
+        
+        .task-card.completed {
+            opacity: 0.6;
+            border-color: var(--green);
+        }
+        
+        .task-card.completed::after {
+            content: '✓';
+            position: absolute;
+            right: 18px;
+            top: 18px;
+            font-size: 24px;
+            color: var(--green);
+            font-weight: 700;
+        }
+        
+        .task-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 10px;
+        }
+        
+        .task-platform {
+            font-size: 20px;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+        }
+        
+        .task-type {
+            font-size: 12px;
+            color: var(--accent);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-top: 2px;
+        }
+        
+        .task-time {
+            font-family: 'Space Mono', monospace;
+            font-size: 14px;
+            font-weight: 700;
+            color: #666;
+        }
+        
+        .task-countdown {
+            font-family: 'Space Mono', monospace;
+            font-size: 11px;
+            color: var(--orange);
+            margin-top: 2px;
+        }
+        
+        .task-actions {
+            display: flex;
+            gap: 8px;
+            margin-top: 14px;
+        }
+        
+        .btn {
+            flex: 1;
+            padding: 12px;
+            border: 2px solid var(--dark);
+            border-radius: 10px;
+            font-family: 'Space Mono', monospace;
+            font-size: 11px;
+            font-weight: 700;
+            cursor: pointer;
+            text-transform: uppercase;
+            background: white;
+        }
+        
+        .btn-done {
+            background: var(--green);
+            border-color: var(--green);
+            color: white;
+        }
+        
+        .btn-skip {
+            background: #999;
+            border-color: #999;
+            color: white;
+        }
+        
+        .empty-queue {
+            text-align: center;
+            padding: 60px 20px;
+            opacity: 0.4;
+        }
+        
+        .empty-icon {
+            font-size: 64px;
+            margin-bottom: 12px;
+        }
+        
+        /* WEEKLY PLANNER */
+        .day-section {
+            margin-bottom: 24px;
+        }
+        
+        .day-header {
+            background: var(--dark);
+            color: white;
+            padding: 12px 20px;
+            border-radius: 12px 12px 0 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .day-name {
+            font-size: 18px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .add-task-btn {
+            background: var(--accent);
+            color: white;
+            border: none;
+            padding: 6px 14px;
+            border-radius: 6px;
+            font-family: 'Space Mono', monospace;
+            font-size: 10px;
+            font-weight: 700;
+            cursor: pointer;
+            text-transform: uppercase;
+        }
+        
+        .day-tasks {
+            background: white;
+            border: 2px solid var(--dark);
+            border-top: none;
+            border-radius: 0 0 12px 12px;
+            padding: 16px;
+            min-height: 60px;
+        }
+        
+        .recurring-task {
+            background: var(--cream);
+            border-left: 4px solid var(--platform-color);
+            padding: 12px;
+            margin-bottom: 8px;
+            border-radius: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .recurring-task-info {
+            flex: 1;
+        }
+        
+        .recurring-platform {
+            font-weight: 700;
+            font-size: 16px;
+            margin-bottom: 2px;
+        }
+        
+        .recurring-details {
+            font-family: 'Space Mono', monospace;
+            font-size: 11px;
+            color: #666;
+        }
+        
+        .delete-btn {
+            background: #ef4444;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 18px;
+            cursor: pointer;
+            line-height: 1;
+        }
+        
+        /* MODAL */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            padding: 20px;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .modal.active {
+            display: flex;
+        }
+        
+        .modal-content {
+            background: white;
+            border-radius: 20px;
+            padding: 24px;
+            max-width: 500px;
+            width: 100%;
+        }
+        
+        .modal-title {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 20px;
+        }
+        
+        .form-group {
+            margin-bottom: 16px;
+        }
+        
+        .form-label {
+            display: block;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 6px;
+            color: #666;
+        }
+        
+        .form-input, .form-select {
+            width: 100%;
+            padding: 12px;
+            background: var(--cream);
+            border: 2px solid var(--border);
+            border-radius: 10px;
+            font-family: 'Crimson Pro', serif;
+            font-size: 15px;
+        }
+        
+        .btn-group {
+            display: flex;
+            gap: 12px;
+            margin-top: 24px;
+        }
+        
+        .btn-primary {
+            flex: 2;
+            padding: 14px;
+            background: var(--dark);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-family: 'Space Mono', monospace;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            cursor: pointer;
+        }
+        
+        .btn-secondary {
+            flex: 1;
+            padding: 14px;
+            background: white;
+            color: var(--dark);
+            border: 2px solid var(--dark);
+            border-radius: 12px;
+            font-family: 'Space Mono', monospace;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            cursor: pointer;
+        }
+        
+        /* STATS BAR */
+        .stats-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: white;
+            border-top: 2px solid var(--dark);
+            padding: 14px 20px;
+            display: flex;
+            justify-content: space-around;
+            font-family: 'Space Mono', monospace;
+            z-index: 100;
+        }
+        
+        .stat {
+            text-align: center;
+        }
+        
+        .stat-value {
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--accent);
+        }
+        
+        .stat-label {
+            font-size: 9px;
+            text-transform: uppercase;
+            opacity: 0.6;
+            margin-top: 2px;
+        }
+        
+        .platform-colors {
+            --snapchat: #FFFC00;
+            --instagram: #E4405F;
+            --tiktok: #00F2EA;
+            --twitter: #1DA1F2;
+            --onlyfans: #00AFF0;
+            --fansly: #0F8AFF;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="app-title">CONTENT QUEUE</div>
+        <div class="app-subtitle">v3.4 - Missed Tracking & Lives</div>
+        <div class="current-time" id="currentTime">--:-- -- EST</div>
+    </div>
+
+    <div class="tab-nav">
+        <button class="tab-btn active" onclick="switchTab('queue')">Queue</button>
+        <button class="tab-btn" onclick="switchTab('planner')">Weekly Planner</button>
+        <button class="tab-btn" onclick="switchTab('settings')">Settings</button>
+        <button class="tab-btn" onclick="switchTab('stats')">Stats</button>
+    </div>
+
+    <!-- QUEUE VIEW -->
+    <div class="view active" id="queueView">
+        <div class="queue-section">
+            <div class="section-header">
+                <div class="section-title">NOW</div>
+                <div class="section-count" id="nowCount">0</div>
+            </div>
+            <div style="font-size: 12px; color: #999; margin-bottom: 12px; font-family: 'Space Mono', monospace;">Due in next 15 minutes</div>
+            <div id="nowQueue"></div>
+        </div>
+
+        <div class="queue-section">
+            <div class="section-header">
+                <div class="section-title">UP NEXT</div>
+                <div class="section-count" id="upNextCount">0</div>
+            </div>
+            <div id="upNextQueue"></div>
+        </div>
+
+        <div class="queue-section">
+            <div class="section-header">
+                <div class="section-title">COMPLETED TODAY</div>
+                <div class="section-count" id="completedCount">0</div>
+            </div>
+            <div id="completedQueue"></div>
+        </div>
+
+        <div class="queue-section">
+            <div class="section-header">
+                <div class="section-title" style="color: #ef4444;">MISSED TODAY</div>
+                <div class="section-count" style="color: #ef4444;" id="missedCount">0</div>
+            </div>
+            <div id="missedQueue"></div>
+        </div>
+    </div>
+
+    <!-- WEEKLY PLANNER VIEW -->
+    <div class="view" id="plannerView">
+        <div id="weeklyPlanner"></div>
+    </div>
+
+    <!-- SETTINGS VIEW -->
+    <div class="view" id="settingsView">
+        <div style="max-width: 600px; margin: 0 auto;">
+            
+            <div style="background: white; border: 2px solid var(--dark); border-radius: 16px; padding: 24px; margin-bottom: 24px;">
+                <div style="font-size: 20px; font-weight: 700; margin-bottom: 16px;">Your Platforms</div>
+                <div style="font-size: 13px; color: #666; margin-bottom: 20px;">Select which platforms you post to</div>
+                
+                <div id="platformCheckboxes" style="display: grid; gap: 12px;">
+                    <label style="display: flex; align-items: center; gap: 12px; padding: 12px; background: var(--cream); border-radius: 10px; cursor: pointer;">
+                        <input type="checkbox" value="snapchat" onchange="togglePlatform(this)">
+                        <span style="font-weight: 600;">Snapchat</span>
+                    </label>
+                    <label style="display: flex; align-items: center; gap: 12px; padding: 12px; background: var(--cream); border-radius: 10px; cursor: pointer;">
+                        <input type="checkbox" value="instagram" onchange="togglePlatform(this)">
+                        <span style="font-weight: 600;">Instagram</span>
+                    </label>
+                    <label style="display: flex; align-items: center; gap: 12px; padding: 12px; background: var(--cream); border-radius: 10px; cursor: pointer;">
+                        <input type="checkbox" value="tiktok" onchange="togglePlatform(this)">
+                        <span style="font-weight: 600;">TikTok</span>
+                    </label>
+                    <label style="display: flex; align-items: center; gap: 12px; padding: 12px; background: var(--cream); border-radius: 10px; cursor: pointer;">
+                        <input type="checkbox" value="twitter" onchange="togglePlatform(this)">
+                        <span style="font-weight: 600;">X/Twitter</span>
+                    </label>
+                    <label style="display: flex; align-items: center; gap: 12px; padding: 12px; background: var(--cream); border-radius: 10px; cursor: pointer;">
+                        <input type="checkbox" value="onlyfans" onchange="togglePlatform(this)">
+                        <span style="font-weight: 600;">OnlyFans</span>
+                    </label>
+                    <label style="display: flex; align-items: center; gap: 12px; padding: 12px; background: var(--cream); border-radius: 10px; cursor: pointer;">
+                        <input type="checkbox" value="fansly" onchange="togglePlatform(this)">
+                        <span style="font-weight: 600;">Fansly</span>
+                    </label>
+                </div>
+            </div>
+
+            <div style="background: white; border: 2px solid var(--dark); border-radius: 16px; padding: 24px;">
+                <div style="font-size: 20px; font-weight: 700; margin-bottom: 16px;">Quick Setup Templates</div>
+                <div style="font-size: 13px; color: #666; margin-bottom: 20px;">Choose a template to auto-populate your weekly schedule</div>
+                
+                <div class="form-group">
+                    <label class="form-label">Select Template</label>
+                    <select class="form-select" id="templateSelect">
+                        <option value="">-- Choose a template --</option>
+                        <option value="of_creator_high">OnlyFans Creator - High Volume</option>
+                        <option value="of_creator_medium">OnlyFans Creator - Medium Volume</option>
+                        <option value="instagram_influencer">Instagram Influencer</option>
+                        <option value="tiktok_creator">TikTok Creator</option>
+                        <option value="multi_platform">Multi-Platform Pro</option>
+                    </select>
+                </div>
+
+                <button onclick="applyTemplate()" style="width: 100%; padding: 16px; background: var(--accent); color: white; border: none; border-radius: 12px; font-family: 'Space Mono', monospace; font-size: 13px; font-weight: 700; text-transform: uppercase; cursor: pointer; margin-top: 12px;">
+                    Apply Template
+                </button>
+
+                <div style="margin-top: 16px; padding: 16px; background: rgba(255, 107, 157, 0.1); border-radius: 10px; font-size: 13px; color: #666;">
+                    💡 <strong>Tip:</strong> After applying, go to Weekly Planner to customize times and add/remove posts
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- STATS VIEW -->
+    <div class="view" id="statsView">
+        <div style="padding: 40px 20px; text-align: center; opacity: 0.5;">
+            <div style="font-size: 64px; margin-bottom: 16px;">📊</div>
+            <div style="font-size: 18px;">Stats coming soon</div>
+        </div>
+    </div>
+
+    <div class="stats-bar">
+        <div class="stat">
+            <div class="stat-value" id="todayCompleted">0</div>
+            <div class="stat-label">Completed</div>
+        </div>
+        <div class="stat">
+            <div class="stat-value" id="weekCompleted">0</div>
+            <div class="stat-label">This Week</div>
+        </div>
+        <div class="stat">
+            <div class="stat-value" id="streakCount">0%</div>
+            <div class="stat-label">Success Rate</div>
+        </div>
+    </div>
+
+    <!-- ADD TASK MODAL -->
+    <div class="modal" id="addTaskModal">
+        <div class="modal-content">
+            <div class="modal-title">Add Recurring Task</div>
+            <div class="form-group">
+                <label class="form-label">Platform</label>
+                <select class="form-select" id="taskPlatform">
+                    <option value="snapchat">Snapchat</option>
+                    <option value="instagram">Instagram</option>
+                    <option value="tiktok">TikTok</option>
+                    <option value="twitter">X/Twitter</option>
+                    <option value="onlyfans">OnlyFans</option>
+                    <option value="fansly">Fansly</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Type</label>
+                <input type="text" class="form-input" id="taskType" placeholder="Story, Post, Video, etc." value="Story">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Time (EST)</label>
+                <input type="time" class="form-input" id="taskTime" value="09:00">
+            </div>
+            <div class="btn-group">
+                <button class="btn-secondary" onclick="closeModal()">Cancel</button>
+                <button class="btn-primary" onclick="saveRecurringTask()">Add Task</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- EDIT GROUP MODAL -->
+    <div class="modal" id="editGroupModal">
+        <div class="modal-content">
+            <div class="modal-title" id="editGroupTitle">Edit Times</div>
+            
+            <div class="form-group">
+                <label class="form-label">Post Type</label>
+                <input type="text" class="form-input" id="editGroupType" placeholder="Story, Post, Video, etc.">
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">Times (EST)</label>
+                <div id="timesListEdit" style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 12px;"></div>
+                <button onclick="addTimeSlot()" style="width: 100%; padding: 10px; background: var(--cream); border: 2px dashed var(--border); border-radius: 8px; font-size: 13px; cursor: pointer; color: #666;">+ Add Time</button>
+            </div>
+            
+            <div class="btn-group">
+                <button class="btn-secondary" onclick="closeModal()">Cancel</button>
+                <button class="btn-secondary" onclick="deleteGroup()" style="background: #ef4444; color: white; border-color: #ef4444;">Delete All</button>
+                <button class="btn-primary" onclick="saveGroupEdit()">Save</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const SYNC_URL = 'http://100.120.222.12:5555/sync';
+        
+        const PLATFORM_COLORS = {
+            snapchat: '#FFFC00',
+            instagram: '#E4405F',
+            tiktok: '#00F2EA',
+            twitter: '#1DA1F2',
+            onlyfans: '#00AFF0',
+            fansly: '#0F8AFF'
+        };
+
+        const PLATFORM_NAMES = {
+            snapchat: 'Snapchat',
+            instagram: 'Instagram',
+            tiktok: 'TikTok',
+            twitter: 'X',
+            onlyfans: 'OnlyFans',
+            fansly: 'Fansly'
+        };
+
+        const DAYS = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
+        const DAY_NAMES = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+
+        let weeklyTasks = {}; // { monday: [{platform, type, time}], tuesday: [...], ... }
+        let completedTasks = {}; // { 'dateKey': {'taskId': true} }
+        let currentDay = '';
+        let enabledPlatforms = []; // User's selected platforms
+        let editingGroup = null; // { day, platform, type }
+
+        const TEMPLATES = {
+            of_creator_high: {
+                name: 'OnlyFans Creator - High Volume',
+                platforms: ['snapchat', 'instagram', 'tiktok', 'twitter', 'onlyfans', 'fansly'],
+                schedule: {
+                    monday: [
+                        {platform: 'snapchat', type: 'Story', time: '09:00'},
+                        {platform: 'snapchat', type: 'Story', time: '12:00'},
+                        {platform: 'snapchat', type: 'Story', time: '15:00'},
+                        {platform: 'snapchat', type: 'Story', time: '18:00'},
+                        {platform: 'snapchat', type: 'Story', time: '20:00'},
+                        {platform: 'instagram', type: 'Story', time: '09:00'},
+                        {platform: 'instagram', type: 'Feed Post', time: '11:00'},
+                        {platform: 'instagram', type: 'Story', time: '12:00'},
+                        {platform: 'instagram', type: 'Story', time: '18:00'},
+                        {platform: 'instagram', type: 'Story', time: '21:00'},
+                        {platform: 'tiktok', type: 'LIVE', time: '10:00'},
+                        {platform: 'tiktok', type: 'Video', time: '11:00'},
+                        {platform: 'tiktok', type: 'Video', time: '19:00'},
+                        {platform: 'twitter', type: 'Tweet', time: '09:00'},
+                        {platform: 'twitter', type: 'Tweet', time: '12:00'},
+                        {platform: 'twitter', type: 'Tweet', time: '15:00'},
+                        {platform: 'twitter', type: 'Tweet', time: '18:00'},
+                        {platform: 'twitter', type: 'Tweet', time: '21:00'},
+                        {platform: 'onlyfans', type: 'Story', time: '21:00'},
+                        {platform: 'fansly', type: 'Story', time: '21:00'}
+                    ],
+                    tuesday: [
+                        {platform: 'snapchat', type: 'Story', time: '09:00'},
+                        {platform: 'snapchat', type: 'Story', time: '12:00'},
+                        {platform: 'snapchat', type: 'Story', time: '15:00'},
+                        {platform: 'snapchat', type: 'Story', time: '18:00'},
+                        {platform: 'snapchat', type: 'Story', time: '20:00'},
+                        {platform: 'instagram', type: 'Story', time: '09:00'},
+                        {platform: 'instagram', type: 'Feed Post', time: '11:00'},
+                        {platform: 'instagram', type: 'Story', time: '12:00'},
+                        {platform: 'instagram', type: 'Story', time: '18:00'},
+                        {platform: 'instagram', type: 'Story', time: '21:00'},
+                        {platform: 'tiktok', type: 'LIVE', time: '10:00'},
+                        {platform: 'tiktok', type: 'Video', time: '11:00'},
+                        {platform: 'tiktok', type: 'Video', time: '19:00'},
+                        {platform: 'twitter', type: 'Tweet', time: '09:00'},
+                        {platform: 'twitter', type: 'Tweet', time: '12:00'},
+                        {platform: 'twitter', type: 'Tweet', time: '15:00'},
+                        {platform: 'twitter', type: 'Tweet', time: '18:00'},
+                        {platform: 'twitter', type: 'Tweet', time: '21:00'},
+                        {platform: 'onlyfans', type: 'Post', time: '20:00'},
+                        {platform: 'onlyfans', type: 'Story', time: '21:00'},
+                        {platform: 'fansly', type: 'Post', time: '20:00'},
+                        {platform: 'fansly', type: 'Story', time: '21:00'}
+                    ],
+                    // Copy Monday schedule for Wed-Fri
+                    wednesday: [], // Will be filled from Monday
+                    thursday: [], // Will be filled from Tuesday  
+                    friday: [], // Will be filled from Monday
+                    saturday: [
+                        {platform: 'snapchat', type: 'Story', time: '09:00'},
+                        {platform: 'snapchat', type: 'Story', time: '12:00'},
+                        {platform: 'snapchat', type: 'Story', time: '15:00'},
+                        {platform: 'snapchat', type: 'Story', time: '18:00'},
+                        {platform: 'snapchat', type: 'Story', time: '20:00'},
+                        {platform: 'instagram', type: 'Story', time: '09:00'},
+                        {platform: 'instagram', type: 'Feed Post', time: '11:00'},
+                        {platform: 'instagram', type: 'Story', time: '12:00'},
+                        {platform: 'instagram', type: 'Story', time: '18:00'},
+                        {platform: 'instagram', type: 'Story', time: '21:00'},
+                        {platform: 'tiktok', type: 'Video', time: '11:00'},
+                        {platform: 'tiktok', type: 'Video', time: '19:00'},
+                        {platform: 'twitter', type: 'Tweet', time: '09:00'},
+                        {platform: 'twitter', type: 'Tweet', time: '12:00'},
+                        {platform: 'twitter', type: 'Tweet', time: '15:00'},
+                        {platform: 'twitter', type: 'Tweet', time: '18:00'},
+                        {platform: 'twitter', type: 'Tweet', time: '21:00'},
+                        {platform: 'onlyfans', type: 'LIVE', time: '20:00'},
+                        {platform: 'onlyfans', type: 'Post', time: '20:00'},
+                        {platform: 'onlyfans', type: 'Story', time: '21:00'},
+                        {platform: 'fansly', type: 'LIVE', time: '20:00'},
+                        {platform: 'fansly', type: 'Post', time: '20:00'},
+                        {platform: 'fansly', type: 'Story', time: '21:00'}
+                    ],
+                    sunday: [
+                        {platform: 'snapchat', type: 'Story', time: '09:00'},
+                        {platform: 'snapchat', type: 'Story', time: '12:00'},
+                        {platform: 'snapchat', type: 'Story', time: '15:00'},
+                        {platform: 'snapchat', type: 'Story', time: '18:00'},
+                        {platform: 'snapchat', type: 'Story', time: '20:00'},
+                        {platform: 'instagram', type: 'Story', time: '09:00'},
+                        {platform: 'instagram', type: 'Feed Post', time: '11:00'},
+                        {platform: 'instagram', type: 'Story', time: '12:00'},
+                        {platform: 'instagram', type: 'Story', time: '18:00'},
+                        {platform: 'instagram', type: 'Story', time: '21:00'},
+                        {platform: 'tiktok', type: 'Video', time: '11:00'},
+                        {platform: 'tiktok', type: 'Video', time: '19:00'},
+                        {platform: 'twitter', type: 'Tweet', time: '09:00'},
+                        {platform: 'twitter', type: 'Tweet', time: '12:00'},
+                        {platform: 'twitter', type: 'Tweet', time: '15:00'},
+                        {platform: 'twitter', type: 'Tweet', time: '18:00'},
+                        {platform: 'twitter', type: 'Tweet', time: '21:00'},
+                        {platform: 'onlyfans', type: 'Story', time: '21:00'},
+                        {platform: 'fansly', type: 'Story', time: '21:00'}
+                    ]
+                }
+            }
+        };
+
+        // Fill in repeating days
+        TEMPLATES.of_creator_high.schedule.wednesday = [...TEMPLATES.of_creator_high.schedule.monday];
+        TEMPLATES.of_creator_high.schedule.thursday = [...TEMPLATES.of_creator_high.schedule.tuesday];
+        TEMPLATES.of_creator_high.schedule.friday = [...TEMPLATES.of_creator_high.schedule.monday];
+
+        async function init() {
+            await loadData();
+            updateClock();
+            setInterval(updateClock, 1000);
+            setInterval(renderQueue, 60000); // Update queue every minute for real-time advancement
+            renderQueue();
+            renderWeeklyPlanner();
+            updateStats();
+        }
+
+        async function loadData() {
+            try {
+                const response = await fetch(SYNC_URL);
+                const data = await response.json();
+                if (data.weeklyTasks) weeklyTasks = data.weeklyTasks;
+                if (data.completedTasks) completedTasks = data.completedTasks;
+                if (data.enabledPlatforms) enabledPlatforms = data.enabledPlatforms;
+            } catch (e) {
+                console.log('Using local data');
+            }
+            
+            // Initialize empty days if needed
+            DAYS.forEach(day => {
+                if (!weeklyTasks[day]) weeklyTasks[day] = [];
+            });
+            
+            // Update platform checkboxes
+            updatePlatformCheckboxes();
+        }
+
+        async function saveData() {
+            const data = {
+                weeklyTasks,
+                completedTasks,
+                enabledPlatforms,
+                lastSync: new Date().toISOString()
+            };
+            
+            try {
+                await fetch(SYNC_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+            } catch (e) {}
+        }
+
+        function updatePlatformCheckboxes() {
+            const checkboxes = document.querySelectorAll('#platformCheckboxes input[type="checkbox"]');
+            checkboxes.forEach(cb => {
+                cb.checked = enabledPlatforms.includes(cb.value);
+            });
+        }
+
+        async function togglePlatform(checkbox) {
+            if (checkbox.checked) {
+                if (!enabledPlatforms.includes(checkbox.value)) {
+                    enabledPlatforms.push(checkbox.value);
+                }
+            } else {
+                enabledPlatforms = enabledPlatforms.filter(p => p !== checkbox.value);
+            }
+            await saveData();
+            renderQueue();
+            renderWeeklyPlanner();
+        }
+
+        async function applyTemplate() {
+            const templateId = document.getElementById('templateSelect').value;
+            if (!templateId) {
+                alert('Please select a template first');
+                return;
+            }
+            
+            const template = TEMPLATES[templateId];
+            if (!template) return;
+            
+            if (!confirm(`Apply "${template.name}" template? This will replace your current weekly schedule.`)) {
+                return;
+            }
+            
+            // Set enabled platforms from template
+            enabledPlatforms = [...template.platforms];
+            updatePlatformCheckboxes();
+            
+            // Apply schedule, filtering by enabled platforms
+            weeklyTasks = {};
+            DAYS.forEach(day => {
+                weeklyTasks[day] = template.schedule[day]
+                    .filter(task => enabledPlatforms.includes(task.platform))
+                    .map(task => ({...task})); // Clone to avoid reference issues
+            });
+            
+            await saveData();
+            renderWeeklyPlanner();
+            renderQueue();
+            
+            alert('Template applied! Go to Weekly Planner to customize.');
+        }
+
+        function updateClock() {
+            const now = new Date();
+            const estTime = now.toLocaleTimeString('en-US', {
+                timeZone: 'America/New_York',
+                hour: 'numeric',
+                minute: '2-digit',
+                hour12: true
+            });
+            document.getElementById('currentTime').textContent = estTime + ' EST';
+        }
+
+        function getDateKey() {
+            const now = new Date();
+            return now.toLocaleDateString('en-US', { timeZone: 'America/New_York' }).split('/').reverse().join('-');
+        }
+
+        function getCurrentDay() {
+            const now = new Date();
+            const dayIndex = now.getDay(); // 0 = Sunday
+            const mappedIndex = dayIndex === 0 ? 6 : dayIndex - 1; // Convert to Monday = 0
+            return DAYS[mappedIndex];
+        }
+
+        function getTodaysTasks() {
+            const day = getCurrentDay();
+            return weeklyTasks[day] || [];
+        }
+
+        function getTimeInMinutes(timeStr) {
+            const [hours, minutes] = timeStr.split(':').map(Number);
+            return hours * 60 + minutes;
+        }
+
+        function getCurrentTimeInMinutes() {
+            const now = new Date();
+            const estTime = new Date(now.toLocaleString('en-US', { timeZone: 'America/New_York' }));
+            return estTime.getHours() * 60 + estTime.getMinutes();
+        }
+
+        function formatCountdown(minutes) {
+            if (minutes < 0) return 'overdue';
+            if (minutes < 60) return `in ${minutes}m`;
+            const hours = Math.floor(minutes / 60);
+            const mins = minutes % 60;
+            if (mins === 0) return `in ${hours}h`;
+            return `in ${hours}h ${mins}m`;
+        }
+
+        function renderQueue() {
+            const tasks = getTodaysTasks();
+            const currentMinutes = getCurrentTimeInMinutes();
+            const dateKey = getDateKey();
+            
+            const nowTasks = [];
+            const upNextTasks = [];
+            const completedList = [];
+            const missedList = [];
+            
+            tasks.forEach((task, index) => {
+                const taskId = `${getCurrentDay()}_${index}`;
+                const completion = completedTasks[dateKey]?.[taskId];
+                
+                if (completion) {
+                    // Task has been marked
+                    if (completion.missed) {
+                        missedList.push({ 
+                            ...task, 
+                            index, 
+                            timestamp: completion.timestamp || new Date().toISOString() 
+                        });
+                    } else {
+                        completedList.push({ 
+                            ...task, 
+                            index, 
+                            timestamp: completion.timestamp || new Date().toISOString() 
+                        });
+                    }
+                    return;
+                }
+                
+                const taskMinutes = getTimeInMinutes(task.time);
+                const diff = taskMinutes - currentMinutes;
+                
+                // Auto-mark as missed if more than 60 minutes overdue
+                if (diff < -60) {
+                    completedTasks[dateKey] = completedTasks[dateKey] || {};
+                    completedTasks[dateKey][taskId] = {
+                        missed: true,
+                        timestamp: new Date().toISOString()
+                    };
+                    saveData(); // Save the auto-miss
+                    missedList.push({ ...task, index, timestamp: new Date().toISOString() });
+                    return;
+                }
+                
+                // NOW = within next 15 minutes OR up to 60 min overdue
+                if (diff >= -60 && diff <= 15) {
+                    nowTasks.push({ ...task, index, diff });
+                }
+                // UP NEXT = beyond 15 minutes
+                else if (diff > 15) {
+                    upNextTasks.push({ ...task, index, diff });
+                }
+            });
+            
+            // Sort by time
+            nowTasks.sort((a, b) => a.diff - b.diff);
+            upNextTasks.sort((a, b) => a.diff - b.diff);
+            completedList.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+            missedList.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+            
+            renderNowQueue(nowTasks);
+            renderUpNextQueue(upNextTasks);
+            renderCompletedQueue(completedList);
+            renderMissedQueue(missedList);
+        }
+
+        function renderNowQueue(tasks) {
+            const container = document.getElementById('nowQueue');
+            document.getElementById('nowCount').textContent = tasks.length;
+            
+            if (tasks.length === 0) {
+                container.innerHTML = '<div class="empty-queue"><div class="empty-icon">✨</div><div>All clear for now!</div></div>';
+                return;
+            }
+            
+            let html = '';
+            tasks.forEach(task => {
+                const taskId = `${getCurrentDay()}_${task.index}`;
+                const isOverdue = task.diff < 0;
+                const overdueLabel = isOverdue ? `<div style="color: #ef4444; font-family: 'Space Mono', monospace; font-size: 11px; margin-top: 4px;">⚠️ OVERDUE</div>` : '';
+                
+                html += `
+                    <div class="task-card" style="--platform-color: ${PLATFORM_COLORS[task.platform]}; ${isOverdue ? 'border-color: #ef4444;' : ''}">
+                        <div class="task-header">
+                            <div>
+                                <div class="task-platform">${PLATFORM_NAMES[task.platform]}</div>
+                                <div class="task-type">${task.type}</div>
+                                ${overdueLabel}
+                            </div>
+                            <div style="text-align: right;">
+                                <div class="task-time">${task.time} EST</div>
+                                <div class="task-countdown">${formatCountdown(task.diff)}</div>
+                            </div>
+                        </div>
+                        <div class="task-actions">
+                            <button class="btn btn-done" onclick="completeTask('${taskId}')">✓ Done</button>
+                            <button class="btn btn-skip" onclick="missTask('${taskId}')" style="background: #ef4444; border-color: #ef4444;">✗ Miss</button>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            container.innerHTML = html;
+        }
+
+        function renderMissedQueue(tasks) {
+            const container = document.getElementById('missedQueue');
+            document.getElementById('missedCount').textContent = tasks.length;
+            
+            if (tasks.length === 0) {
+                container.innerHTML = '<div class="empty-queue"><div class="empty-icon">✅</div><div>No missed tasks today!</div></div>';
+                return;
+            }
+            
+            let html = '';
+            tasks.forEach(task => {
+                const timestamp = new Date(task.timestamp);
+                const timeStr = timestamp.toLocaleTimeString('en-US', {
+                    hour: 'numeric',
+                    minute: '2-digit',
+                    hour12: true
+                });
+                
+                html += `
+                    <div class="task-card" style="--platform-color: ${PLATFORM_COLORS[task.platform]}; border-color: #ef4444; opacity: 0.7;">
+                        <div class="task-header">
+                            <div>
+                                <div class="task-platform">${PLATFORM_NAMES[task.platform]}</div>
+                                <div class="task-type">${task.type} • Scheduled ${task.time} EST</div>
+                            </div>
+                            <div style="color: #ef4444; font-size: 24px;">✗</div>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            container.innerHTML = html;
+        }
+
+        async function missTask(taskId) {
+            const dateKey = getDateKey();
+            if (!completedTasks[dateKey]) completedTasks[dateKey] = {};
+            completedTasks[dateKey][taskId] = {
+                missed: true,
+                timestamp: new Date().toISOString()
+            };
+            await saveData();
+            renderQueue();
+            updateStats();
+        }
+
+        function renderUpNextQueue(tasks) {
+            const container = document.getElementById('upNextQueue');
+            document.getElementById('upNextCount').textContent = tasks.length;
+            
+            if (tasks.length === 0) {
+                container.innerHTML = '<div class="empty-queue"><div class="empty-icon">📅</div><div>Nothing scheduled ahead</div></div>';
+                return;
+            }
+            
+            // Group by hour
+            const grouped = {};
+            tasks.forEach(task => {
+                const hour = task.time.split(':')[0];
+                if (!grouped[hour]) grouped[hour] = [];
+                grouped[hour].push(task);
+            });
+            
+            let html = '';
+            Object.keys(grouped).sort().forEach(hour => {
+                const hourTasks = grouped[hour];
+                const firstTask = hourTasks[0];
+                const count = hourTasks.length;
+                const label = count === 1 ? '1 task' : `${count} tasks`;
+                
+                html += `
+                    <div class="task-card" style="--platform-color: ${PLATFORM_COLORS[firstTask.platform]}">
+                        <div class="task-header">
+                            <div>
+                                <div class="task-platform">${formatCountdown(firstTask.diff)}</div>
+                                <div class="task-type">${label} at ${hour}:00 EST</div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            container.innerHTML = html;
+        }
+
+        function renderCompletedQueue(tasks) {
+            const container = document.getElementById('completedQueue');
+            document.getElementById('completedCount').textContent = tasks.length;
+            
+            if (tasks.length === 0) {
+                container.innerHTML = '<div class="empty-queue"><div class="empty-icon">✨</div><div>No tasks completed yet today</div></div>';
+                return;
+            }
+            
+            let html = '';
+            tasks.forEach(task => {
+                const timestamp = new Date(task.timestamp);
+                const timeStr = timestamp.toLocaleTimeString('en-US', {
+                    hour: 'numeric',
+                    minute: '2-digit',
+                    hour12: true
+                });
+                
+                html += `
+                    <div class="task-card completed" style="--platform-color: ${PLATFORM_COLORS[task.platform]}">
+                        <div class="task-header">
+                            <div>
+                                <div class="task-platform">${PLATFORM_NAMES[task.platform]}</div>
+                                <div class="task-type">${task.type} • Completed at ${timeStr}</div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            container.innerHTML = html;
+        }
+
+        async function completeTask(taskId) {
+            const dateKey = getDateKey();
+            if (!completedTasks[dateKey]) completedTasks[dateKey] = {};
+            completedTasks[dateKey][taskId] = {
+                completed: true,
+                timestamp: new Date().toISOString()
+            };
+            await saveData();
+            renderQueue();
+            updateStats();
+        }
+
+        async function skipTask(taskId) {
+            // Same as complete for now
+            await completeTask(taskId);
+        }
+
+        function renderWeeklyPlanner() {
+            const container = document.getElementById('weeklyPlanner');
+            let html = '';
+            
+            DAYS.forEach((day, index) => {
+                const tasks = weeklyTasks[day] || [];
+                
+                // Group by platform + type
+                const grouped = {};
+                tasks.forEach((task, taskIndex) => {
+                    const key = `${task.platform}_${task.type}`;
+                    if (!grouped[key]) {
+                        grouped[key] = {
+                            platform: task.platform,
+                            type: task.type,
+                            times: [],
+                            indices: []
+                        };
+                    }
+                    grouped[key].times.push(task.time);
+                    grouped[key].indices.push(taskIndex);
+                });
+                
+                html += `
+                    <div class="day-section">
+                        <div class="day-header">
+                            <div class="day-name">${DAY_NAMES[index]}</div>
+                            <button class="add-task-btn" onclick="openAddTaskModal('${day}')">+ Add</button>
+                        </div>
+                        <div class="day-tasks" id="tasks-${day}">
+                `;
+                
+                if (Object.keys(grouped).length === 0) {
+                    html += '<div style="color: #999; text-align: center; padding: 12px;">No recurring tasks</div>';
+                } else {
+                    Object.values(grouped).forEach(group => {
+                        const timesList = group.times.join(', ');
+                        html += `
+                            <div class="recurring-task" style="--platform-color: ${PLATFORM_COLORS[group.platform]}">
+                                <div class="recurring-task-info">
+                                    <div class="recurring-platform">${PLATFORM_NAMES[group.platform]} ${group.type}s</div>
+                                    <div class="recurring-details">${timesList} EST</div>
+                                </div>
+                                <button class="add-task-btn" onclick="openEditGroupModal('${day}', '${group.platform}', '${group.type}')">Edit</button>
+                            </div>
+                        `;
+                    });
+                }
+                
+                html += '</div></div>';
+            });
+            
+            container.innerHTML = html;
+        }
+
+        function openAddTaskModal(day) {
+            currentDay = day;
+            
+            // Update platform dropdown to only show enabled platforms
+            const select = document.getElementById('taskPlatform');
+            select.innerHTML = '';
+            
+            if (enabledPlatforms.length === 0) {
+                select.innerHTML = '<option value="">Go to Settings to enable platforms first</option>';
+                select.disabled = true;
+            } else {
+                select.disabled = false;
+                enabledPlatforms.forEach(platform => {
+                    const option = document.createElement('option');
+                    option.value = platform;
+                    option.textContent = PLATFORM_NAMES[platform];
+                    select.appendChild(option);
+                });
+            }
+            
+            document.getElementById('addTaskModal').classList.add('active');
+        }
+
+        function openEditGroupModal(day, platform, type) {
+            editingGroup = { day, platform, type };
+            
+            // Get all tasks for this group
+            const tasks = weeklyTasks[day].filter(t => t.platform === platform && t.type === type);
+            const times = tasks.map(t => t.time).sort();
+            
+            // Set title and type
+            document.getElementById('editGroupTitle').textContent = `Edit ${PLATFORM_NAMES[platform]} ${type}s`;
+            document.getElementById('editGroupType').value = type;
+            
+            // Render time slots
+            renderTimeSlots(times);
+            
+            document.getElementById('editGroupModal').classList.add('active');
+        }
+
+        function renderTimeSlots(times = []) {
+            const container = document.getElementById('timesListEdit');
+            container.innerHTML = '';
+            
+            if (times.length === 0) {
+                times = ['09:00']; // Default one slot
+            }
+            
+            times.forEach((time, index) => {
+                const div = document.createElement('div');
+                div.style.cssText = 'display: flex; gap: 8px; align-items: center;';
+                div.innerHTML = `
+                    <input type="time" class="form-input time-slot-input" value="${time}" style="flex: 1;">
+                    <button onclick="removeTimeSlot(${index})" style="padding: 10px 14px; background: #ef4444; color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 18px; line-height: 1;">×</button>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        function addTimeSlot() {
+            const container = document.getElementById('timesListEdit');
+            const inputs = container.querySelectorAll('.time-slot-input');
+            const lastTime = inputs.length > 0 ? inputs[inputs.length - 1].value : '09:00';
+            
+            // Add 1 hour to last time
+            const [h, m] = lastTime.split(':').map(Number);
+            let newHour = h + 1;
+            if (newHour >= 24) newHour = 0;
+            const newTime = `${String(newHour).padStart(2, '0')}:${String(m).padStart(2, '0')}`;
+            
+            const div = document.createElement('div');
+            div.style.cssText = 'display: flex; gap: 8px; align-items: center;';
+            div.innerHTML = `
+                <input type="time" class="form-input time-slot-input" value="${newTime}" style="flex: 1;">
+                <button onclick="removeTimeSlot(${inputs.length})" style="padding: 10px 14px; background: #ef4444; color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 18px; line-height: 1;">×</button>
+            `;
+            container.appendChild(div);
+        }
+
+        function removeTimeSlot(index) {
+            const container = document.getElementById('timesListEdit');
+            const inputs = container.querySelectorAll('.time-slot-input');
+            
+            if (inputs.length <= 1) {
+                alert('Must have at least one time slot');
+                return;
+            }
+            
+            const times = Array.from(inputs).map(input => input.value);
+            times.splice(index, 1);
+            renderTimeSlots(times);
+        }
+
+        async function saveGroupEdit() {
+            if (!editingGroup) return;
+            
+            const { day, platform, type: oldType } = editingGroup;
+            const newType = document.getElementById('editGroupType').value.trim();
+            
+            if (!newType) {
+                alert('Type cannot be empty');
+                return;
+            }
+            
+            // Get all times
+            const inputs = document.querySelectorAll('#timesListEdit .time-slot-input');
+            const times = Array.from(inputs).map(input => input.value);
+            
+            if (times.length === 0) {
+                alert('Must have at least one time');
+                return;
+            }
+            
+            // Remove old tasks for this group
+            weeklyTasks[day] = weeklyTasks[day].filter(t => 
+                !(t.platform === platform && t.type === oldType)
+            );
+            
+            // Add new tasks
+            times.forEach(time => {
+                weeklyTasks[day].push({ platform, type: newType, time });
+            });
+            
+            // Sort by time
+            weeklyTasks[day].sort((a, b) => {
+                return getTimeInMinutes(a.time) - getTimeInMinutes(b.time);
+            });
+            
+            await saveData();
+            renderWeeklyPlanner();
+            renderQueue();
+            closeModal();
+        }
+
+        async function deleteGroup() {
+            if (!editingGroup) return;
+            
+            const { day, platform, type } = editingGroup;
+            
+            if (!confirm(`Delete all ${PLATFORM_NAMES[platform]} ${type}s on ${DAY_NAMES[DAYS.indexOf(day)]}?`)) {
+                return;
+            }
+            
+            // Remove all tasks for this group
+            weeklyTasks[day] = weeklyTasks[day].filter(t => 
+                !(t.platform === platform && t.type === type)
+            );
+            
+            await saveData();
+            renderWeeklyPlanner();
+            renderQueue();
+            closeModal();
+        }
+
+        function closeModal() {
+            document.getElementById('addTaskModal').classList.remove('active');
+            document.getElementById('editGroupModal').classList.remove('active');
+            editingGroup = null;
+        }
+
+        async function saveRecurringTask() {
+            if (!currentDay) return;
+            
+            const platform = document.getElementById('taskPlatform').value;
+            const type = document.getElementById('taskType').value;
+            const time = document.getElementById('taskTime').value;
+            
+            if (!weeklyTasks[currentDay]) weeklyTasks[currentDay] = [];
+            weeklyTasks[currentDay].push({ platform, type, time });
+            
+            // Sort by time
+            weeklyTasks[currentDay].sort((a, b) => {
+                return getTimeInMinutes(a.time) - getTimeInMinutes(b.time);
+            });
+            
+            await saveData();
+            renderWeeklyPlanner();
+            renderQueue();
+            closeModal();
+        }
+
+        function updateStats() {
+            const dateKey = getDateKey();
+            const today = completedTasks[dateKey] || {};
+            
+            // Count completed vs missed
+            const completedToday = Object.values(today).filter(v => v.completed).length;
+            const totalToday = getTodaysTasks().length;
+            const rate = totalToday > 0 ? Math.round((completedToday / totalToday) * 100) : 0;
+            
+            // Count this week completed
+            let weekCount = 0;
+            for (let i = 0; i < 7; i++) {
+                const d = new Date();
+                d.setDate(d.getDate() - i);
+                const key = d.toLocaleDateString('en-US').split('/').reverse().join('-');
+                const dayData = completedTasks[key] || {};
+                weekCount += Object.values(dayData).filter(v => v.completed).length;
+            }
+            
+            document.getElementById('todayCompleted').textContent = completedToday;
+            document.getElementById('weekCompleted').textContent = weekCount;
+            document.getElementById('streakCount').textContent = rate + '%';
+        }
+
+        function switchTab(tab) {
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.view').forEach(view => view.classList.remove('active'));
+            
+            event.currentTarget.classList.add('active');
+            document.getElementById(tab + 'View').classList.add('active');
+        }
+
+        init();
+    </script>
+</body>
+</html>
