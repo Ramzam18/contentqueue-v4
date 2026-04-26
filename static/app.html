@@ -508,12 +508,17 @@
                 <div style="font-size: 20px; font-weight: 700; margin-bottom: 16px;">Your Platforms</div>
                 <div style="font-size: 13px; color: #666; margin-bottom: 20px;">Select which platforms you post to</div>
                 
-                <div id="platformCheckboxes" style="display: grid; grid-template-columns: 1fr; gap: 16px; margin-bottom: 24px;">
+                <div id="platformCheckboxes" style="display: grid; grid-template-columns: 1fr; gap: 12px;">
+                    <label style="display: flex; align-items: center; gap: 12px; padding: 12px; background: var(--cream); border-radius: 10px; cursor: pointer;">
+                        <input type="checkbox" value="snapchat" onchange="togglePlatform(this)">
+                        <span style="font-weight: 600;">Snapchat</span>
+                    </label>
+                    
                     <!-- Instagram with LIVE -->
                     <div style="background: var(--cream); border-radius: 10px; padding: 12px;">
                         <label style="display: flex; align-items: center; gap: 12px; cursor: pointer; margin-bottom: 8px;">
                             <input type="checkbox" value="instagram" onchange="togglePlatform(this)">
-                            <span style="font-weight: 600; flex: 1;">Instagram</span>
+                            <span style="font-weight: 600;">Instagram</span>
                         </label>
                         <div style="margin-left: 32px; padding: 8px; background: white; border-radius: 6px; font-size: 12px;">
                             <label style="display: flex; align-items: center; gap: 8px;">
@@ -523,7 +528,7 @@
                             <div id="live_instagram_controls" style="display: none; margin-left: 24px; margin-top: 8px;">
                                 <select id="live_instagram_days" style="padding: 4px; margin-right: 8px; font-size: 11px;">
                                     <option value="weekdays">Weekdays</option>
-                                    <option value="weekends">Weekends</option>
+                                    <option value="weekends" selected>Weekends</option>
                                     <option value="sat">Saturdays</option>
                                 </select>
                                 <input type="time" id="live_instagram_time" value="19:00" style="padding: 4px; font-size: 11px;">
@@ -535,7 +540,7 @@
                     <div style="background: var(--cream); border-radius: 10px; padding: 12px;">
                         <label style="display: flex; align-items: center; gap: 12px; cursor: pointer; margin-bottom: 8px;">
                             <input type="checkbox" value="tiktok" onchange="togglePlatform(this)">
-                            <span style="font-weight: 600; flex: 1;">TikTok</span>
+                            <span style="font-weight: 600;">TikTok</span>
                         </label>
                         <div style="margin-left: 32px; padding: 8px; background: white; border-radius: 6px; font-size: 12px;">
                             <label style="display: flex; align-items: center; gap: 8px;">
@@ -552,11 +557,16 @@
                         </div>
                     </div>
                     
+                    <label style="display: flex; align-items: center; gap: 12px; padding: 12px; background: var(--cream); border-radius: 10px; cursor: pointer;">
+                        <input type="checkbox" value="twitter" onchange="togglePlatform(this)">
+                        <span style="font-weight: 600;">X/Twitter</span>
+                    </label>
+                    
                     <!-- OnlyFans with LIVE -->
                     <div style="background: var(--cream); border-radius: 10px; padding: 12px;">
                         <label style="display: flex; align-items: center; gap: 12px; cursor: pointer; margin-bottom: 8px;">
                             <input type="checkbox" value="onlyfans" onchange="togglePlatform(this)">
-                            <span style="font-weight: 600; flex: 1;">OnlyFans</span>
+                            <span style="font-weight: 600;">OnlyFans</span>
                         </label>
                         <div style="margin-left: 32px; padding: 8px; background: white; border-radius: 6px; font-size: 12px;">
                             <label style="display: flex; align-items: center; gap: 8px;">
@@ -577,7 +587,7 @@
                     <div style="background: var(--cream); border-radius: 10px; padding: 12px;">
                         <label style="display: flex; align-items: center; gap: 12px; cursor: pointer; margin-bottom: 8px;">
                             <input type="checkbox" value="fansly" onchange="togglePlatform(this)">
-                            <span style="font-weight: 600; flex: 1;">Fansly</span>
+                            <span style="font-weight: 600;">Fansly</span>
                         </label>
                         <div style="margin-left: 32px; padding: 8px; background: white; border-radius: 6px; font-size: 12px;">
                             <label style="display: flex; align-items: center; gap: 8px;">
@@ -594,15 +604,6 @@
                         </div>
                     </div>
                     
-                    <!-- Other platforms -->
-                    <label style="display: flex; align-items: center; gap: 12px; padding: 12px; background: var(--cream); border-radius: 10px; cursor: pointer;">
-                        <input type="checkbox" value="snapchat" onchange="togglePlatform(this)">
-                        <span style="font-weight: 600;">Snapchat</span>
-                    </label>
-                    <label style="display: flex; align-items: center; gap: 12px; padding: 12px; background: var(--cream); border-radius: 10px; cursor: pointer;">
-                        <input type="checkbox" value="twitter" onchange="togglePlatform(this)">
-                        <span style="font-weight: 600;">X/Twitter</span>
-                    </label>
                     <label style="display: flex; align-items: center; gap: 12px; padding: 12px; background: var(--cream); border-radius: 10px; cursor: pointer;">
                         <input type="checkbox" value="reddit" onchange="togglePlatform(this)">
                         <span style="font-weight: 600;">Reddit</span>
@@ -628,7 +629,6 @@
                         <span style="font-weight: 600;">📹 Filming/Content Creation</span>
                     </label>
                 </div>
-            </div>
 
             <div style="background: white; border: 2px solid var(--dark); border-radius: 16px; padding: 24px;">
                 <div style="font-size: 20px; font-weight: 700; margin-bottom: 16px;">Quick Setup Templates</div>
