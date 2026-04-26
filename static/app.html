@@ -995,6 +995,12 @@
                 ],
                 reddit: [
                     {type: 'Post', time: '10:00', note: 'SFW teaser to OF'}
+                ],
+                onlyfans: [
+                    {type: 'Post', time: '20:00', note: 'Cross-promo from main'}
+                ],
+                fansly: [
+                    {type: 'Post', time: '20:00', note: 'Cross-promo from main'}
                 ]
             },
             // When main platform is TikTok
@@ -1013,6 +1019,15 @@
                 ],
                 youtube: [
                     {type: 'Short', time: '12:00', note: 'TikTok compilation'}
+                ],
+                snapchat: [
+                    {type: 'Story', time: '12:00', note: 'TikTok teaser'}
+                ],
+                onlyfans: [
+                    {type: 'Story', time: '21:00', note: 'Check my TikTok'}
+                ],
+                fansly: [
+                    {type: 'Story', time: '21:00', note: 'Check my TikTok'}
                 ]
             },
             // When main platform is Instagram
@@ -1027,6 +1042,15 @@
                 ],
                 pinterest: [
                     {type: 'Pin', time: '10:00', note: 'IG post as pin'}
+                ],
+                snapchat: [
+                    {type: 'Story', time: '12:00', note: 'IG story repost'}
+                ],
+                onlyfans: [
+                    {type: 'Story', time: '21:00', note: 'Follow my IG'}
+                ],
+                fansly: [
+                    {type: 'Story', time: '21:00', note: 'Follow my IG'}
                 ]
             }
         };
@@ -1050,13 +1074,30 @@
             }
             
             // Identify main platform from template
-            const mainPlatform = template.platforms[0]; // First platform is the focus
+            // For multi-platform templates, use first SELECTED platform from template
+            // For focused templates (1-2 platforms), use the template's focus
+            let mainPlatform;
+            if (template.platforms.length <= 2) {
+                // Focused template (TikTok Creator, Instagram Influencer, etc)
+                mainPlatform = template.platforms.find(p => enabledPlatforms.includes(p));
+            } else {
+                // Multi-platform template - no main, just apply all
+                mainPlatform = null;
+            }
+            
             const supportingPlatforms = enabledPlatforms.filter(p => !template.platforms.includes(p));
             
-            let message = `Apply "${template.name}" template?\n\nMain: ${PLATFORM_NAMES[mainPlatform]}`;
-            if (supportingPlatforms.length > 0) {
-                const supportNames = supportingPlatforms.map(p => PLATFORM_NAMES[p]).join(', ');
-                message += `\nSupporting: ${supportNames} (auto cross-promotion)`;
+            let message = `Apply "${template.name}" template?`;
+            if (mainPlatform) {
+                message += `\n\nMain: ${PLATFORM_NAMES[mainPlatform]}`;
+                if (supportingPlatforms.length > 0) {
+                    const supportNames = supportingPlatforms.map(p => PLATFORM_NAMES[p]).join(', ');
+                    message += `\nSupporting: ${supportNames} (auto cross-promotion)`;
+                }
+            } else {
+                // Multi-platform balanced
+                const selectedNames = enabledPlatforms.map(p => PLATFORM_NAMES[p]).join(', ');
+                message += `\n\nPlatforms: ${selectedNames}`;
             }
             
             if (!confirm(message)) return;
@@ -1069,9 +1110,10 @@
                     .map(task => ({...task}));
             });
             
-            // Add cross-promotion tasks for supporting platforms
-            const crossPromoKey = mainPlatform + '_support';
-            if (CROSS_PROMO[crossPromoKey] && supportingPlatforms.length > 0) {
+            // Add cross-promotion tasks for supporting platforms (only if focused template)
+            if (mainPlatform && supportingPlatforms.length > 0) {
+                const crossPromoKey = mainPlatform + '_support';
+                if (CROSS_PROMO[crossPromoKey]) {
                 supportingPlatforms.forEach(platform => {
                     const promoTasks = CROSS_PROMO[crossPromoKey][platform];
                     if (promoTasks) {
@@ -1086,6 +1128,7 @@
                         });
                     }
                 });
+                }
             }
             
             await saveData();
