@@ -882,9 +882,7 @@
                         {platform: 'instagram', type: 'Feed Post', time: '11:00'},
                         {platform: 'instagram', type: 'Story', time: '12:00'},
                         {platform: 'instagram', type: 'Story', time: '18:00'},
-                        {platform: 'instagram', type: 'Story', time: '21:00'},
-                        {platform: 'tiktok', type: 'LIVE', time: '10:00'},
-                        {platform: 'tiktok', type: 'Video', time: '11:00'},
+                        {platform: 'instagram', type: 'Story', time: '21:00'},                        {platform: 'tiktok', type: 'Video', time: '11:00'},
                         {platform: 'tiktok', type: 'Video', time: '19:00'},
                         {platform: 'twitter', type: 'Tweet', time: '09:00'},
                         {platform: 'twitter', type: 'Tweet', time: '12:00'},
@@ -904,9 +902,7 @@
                         {platform: 'instagram', type: 'Feed Post', time: '11:00'},
                         {platform: 'instagram', type: 'Story', time: '12:00'},
                         {platform: 'instagram', type: 'Story', time: '18:00'},
-                        {platform: 'instagram', type: 'Story', time: '21:00'},
-                        {platform: 'tiktok', type: 'LIVE', time: '10:00'},
-                        {platform: 'tiktok', type: 'Video', time: '11:00'},
+                        {platform: 'instagram', type: 'Story', time: '21:00'},                        {platform: 'tiktok', type: 'Video', time: '11:00'},
                         {platform: 'tiktok', type: 'Video', time: '19:00'},
                         {platform: 'twitter', type: 'Tweet', time: '09:00'},
                         {platform: 'twitter', type: 'Tweet', time: '12:00'},
@@ -939,12 +935,8 @@
                         {platform: 'twitter', type: 'Tweet', time: '12:00'},
                         {platform: 'twitter', type: 'Tweet', time: '15:00'},
                         {platform: 'twitter', type: 'Tweet', time: '18:00'},
-                        {platform: 'twitter', type: 'Tweet', time: '21:00'},
-                        {platform: 'onlyfans', type: 'LIVE', time: '20:00'},
-                        {platform: 'onlyfans', type: 'Post', time: '20:00'},
-                        {platform: 'onlyfans', type: 'Story', time: '21:00'},
-                        {platform: 'fansly', type: 'LIVE', time: '20:00'},
-                        {platform: 'fansly', type: 'Post', time: '20:00'},
+                        {platform: 'twitter', type: 'Tweet', time: '21:00'},                        {platform: 'onlyfans', type: 'Post', time: '20:00'},
+                        {platform: 'onlyfans', type: 'Story', time: '21:00'},                        {platform: 'fansly', type: 'Post', time: '20:00'},
                         {platform: 'fansly', type: 'Story', time: '21:00'}
                     ],
                     sunday: [
@@ -989,7 +981,6 @@
                         {platform: 'fansly', type: 'Post', time: '20:00'}
                     ],
                     tuesday: [], wednesday: [], thursday: [], friday: [],
-                    saturday: [{platform: 'onlyfans', type: 'LIVE', time: '20:00'}],
                     sunday: []
                 }
             },
@@ -999,14 +990,11 @@
                 platforms: ['instagram'],
                 schedule: {
                     monday: [
-                        {platform: 'instagram', type: 'Feed Post', time: '10:00'},
-                        {platform: 'instagram', type: 'LIVE', time: '19:00'},
-                        {platform: 'instagram', type: 'Story', time: '09:00'},
+                        {platform: 'instagram', type: 'Feed Post', time: '10:00'},                        {platform: 'instagram', type: 'Story', time: '09:00'},
                         {platform: 'instagram', type: 'Story', time: '14:00'},
                         {platform: 'instagram', type: 'Story', time: '20:00'}
                     ],
                     tuesday: [], wednesday: [], thursday: [], friday: [],
-                    saturday: [{platform: 'instagram', type: 'LIVE', time: '19:00'}],
                     sunday: []
                 }
             },
@@ -1015,9 +1003,7 @@
                 description: 'TikTok growth strategy',
                 platforms: ['tiktok'],
                 schedule: {
-                    monday: [
-                        {platform: 'tiktok', type: 'LIVE', time: '10:00'},
-                        {platform: 'tiktok', type: 'Video', time: '11:00'},
+                    monday: [                        {platform: 'tiktok', type: 'Video', time: '11:00'},
                         {platform: 'tiktok', type: 'Video', time: '19:00'}
                     ],
                     tuesday: [], wednesday: [], thursday: [], friday: [], saturday: [], sunday: []
@@ -1035,10 +1021,7 @@
                         {platform: 'onlyfans', type: 'Story', time: '21:00'}
                     ],
                     tuesday: [], wednesday: [], thursday: [], friday: [],
-                    saturday: [
-                        {platform: 'fansly', type: 'LIVE', time: '20:00'},
-                        {platform: 'onlyfans', type: 'LIVE', time: '20:00'}
-                    ],
+                    saturday: [                    ],
                     sunday: []
                 }
             },
@@ -1367,29 +1350,37 @@
                 }
             }
             
-            // Add LIVE tasks if enabled
-            const livePlatforms = ['instagram', 'tiktok', 'onlyfans', 'fansly'];
-            livePlatforms.forEach(platform => {
-                const liveCheckbox = document.getElementById(`live_${platform}`);
-                if (liveCheckbox && liveCheckbox.checked && enabledPlatforms.includes(platform)) {
-                    const daysOption = document.getElementById(`live_${platform}_days`).value;
-                    const time = document.getElementById(`live_${platform}_time`).value;
-                    
-                    // Determine which days to add LIVE
-                    let daysToAdd = [];
-                    if (daysOption === 'daily') daysToAdd = DAYS;
-                    else if (daysOption === 'weekdays') daysToAdd = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday'];
-                    else if (daysOption === 'weekends') daysToAdd = ['saturday', 'sunday'];
-                    else if (daysOption === 'mwf') daysToAdd = ['monday', 'wednesday', 'friday'];
-                    else if (daysOption === 'sat') daysToAdd = ['saturday'];
-                    
-                    // Add LIVE task to each day
-                    daysToAdd.forEach(day => {
-                        weeklyTasks[day].push({
-                            platform: platform,
-                            type: 'LIVE',
-                            time: time
-                        });
+            // Add LIVE tasks if enabled with optimal schedules
+            const liveConfigs = {
+                instagram: { 
+                    standard: [{day: 'monday', time: '19:00'}, {day: 'saturday', time: '19:00'}],
+                    light: [{day: 'saturday', time: '19:00'}],
+                    heavy: ['monday','wednesday','friday','saturday'].map(d => ({day: d, time: '19:00'}))
+                },
+                tiktok: { 
+                    standard: ['monday','tuesday','wednesday','thursday','friday'].map(d => ({day: d, time: '10:00'})),
+                    light: ['monday','wednesday','friday'].map(d => ({day: d, time: '10:00'})),
+                    heavy: ['monday','tuesday','wednesday','thursday','friday','saturday'].map(d => ({day: d, time: '10:00'}))
+                },
+                onlyfans: { 
+                    standard: [{day: 'saturday', time: '20:00'}],
+                    light: [{day: 'saturday', time: '20:00'}],
+                    heavy: [{day: 'friday', time: '20:00'}, {day: 'saturday', time: '20:00'}]
+                },
+                fansly: { 
+                    standard: [{day: 'saturday', time: '20:00'}],
+                    light: [{day: 'saturday', time: '20:00'}],
+                    heavy: [{day: 'friday', time: '20:00'}, {day: 'saturday', time: '20:00'}]
+                }
+            };
+            
+            ['instagram', 'tiktok', 'onlyfans', 'fansly'].forEach(platform => {
+                const liveCheck = document.getElementById('live_' + platform);
+                if (liveCheck && liveCheck.checked && enabledPlatforms.includes(platform)) {
+                    const freq = document.getElementById('freq_live_' + platform)?.value || 'standard';
+                    const schedule = liveConfigs[platform][freq];
+                    schedule.forEach(slot => {
+                        weeklyTasks[slot.day].push({platform, type: 'LIVE', time: slot.time});
                     });
                 }
             });
@@ -1908,33 +1899,6 @@
                 return getTimeInMinutes(a.time) - getTimeInMinutes(b.time);
             });
             
-            // Add LIVE tasks if enabled
-            const livePlatforms = ['instagram', 'tiktok', 'onlyfans', 'fansly'];
-            livePlatforms.forEach(platform => {
-                const liveCheckbox = document.getElementById(`live_${platform}`);
-                if (liveCheckbox && liveCheckbox.checked && enabledPlatforms.includes(platform)) {
-                    const daysOption = document.getElementById(`live_${platform}_days`).value;
-                    const time = document.getElementById(`live_${platform}_time`).value;
-                    
-                    // Determine which days to add LIVE
-                    let daysToAdd = [];
-                    if (daysOption === 'daily') daysToAdd = DAYS;
-                    else if (daysOption === 'weekdays') daysToAdd = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday'];
-                    else if (daysOption === 'weekends') daysToAdd = ['saturday', 'sunday'];
-                    else if (daysOption === 'mwf') daysToAdd = ['monday', 'wednesday', 'friday'];
-                    else if (daysOption === 'sat') daysToAdd = ['saturday'];
-                    
-                    // Add LIVE task to each day
-                    daysToAdd.forEach(day => {
-                        weeklyTasks[day].push({
-                            platform: platform,
-                            type: 'LIVE',
-                            time: time
-                        });
-                    });
-                }
-            });
-            
             await saveData();
             renderWeeklyPlanner();
             renderQueue();
@@ -1954,33 +1918,6 @@
             weeklyTasks[day] = weeklyTasks[day].filter(t => 
                 !(t.platform === platform && t.type === type)
             );
-            
-            // Add LIVE tasks if enabled
-            const livePlatforms = ['instagram', 'tiktok', 'onlyfans', 'fansly'];
-            livePlatforms.forEach(platform => {
-                const liveCheckbox = document.getElementById(`live_${platform}`);
-                if (liveCheckbox && liveCheckbox.checked && enabledPlatforms.includes(platform)) {
-                    const daysOption = document.getElementById(`live_${platform}_days`).value;
-                    const time = document.getElementById(`live_${platform}_time`).value;
-                    
-                    // Determine which days to add LIVE
-                    let daysToAdd = [];
-                    if (daysOption === 'daily') daysToAdd = DAYS;
-                    else if (daysOption === 'weekdays') daysToAdd = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday'];
-                    else if (daysOption === 'weekends') daysToAdd = ['saturday', 'sunday'];
-                    else if (daysOption === 'mwf') daysToAdd = ['monday', 'wednesday', 'friday'];
-                    else if (daysOption === 'sat') daysToAdd = ['saturday'];
-                    
-                    // Add LIVE task to each day
-                    daysToAdd.forEach(day => {
-                        weeklyTasks[day].push({
-                            platform: platform,
-                            type: 'LIVE',
-                            time: time
-                        });
-                    });
-                }
-            });
             
             await saveData();
             renderWeeklyPlanner();
@@ -2007,33 +1944,6 @@
             // Sort by time
             weeklyTasks[currentDay].sort((a, b) => {
                 return getTimeInMinutes(a.time) - getTimeInMinutes(b.time);
-            });
-            
-            // Add LIVE tasks if enabled
-            const livePlatforms = ['instagram', 'tiktok', 'onlyfans', 'fansly'];
-            livePlatforms.forEach(platform => {
-                const liveCheckbox = document.getElementById(`live_${platform}`);
-                if (liveCheckbox && liveCheckbox.checked && enabledPlatforms.includes(platform)) {
-                    const daysOption = document.getElementById(`live_${platform}_days`).value;
-                    const time = document.getElementById(`live_${platform}_time`).value;
-                    
-                    // Determine which days to add LIVE
-                    let daysToAdd = [];
-                    if (daysOption === 'daily') daysToAdd = DAYS;
-                    else if (daysOption === 'weekdays') daysToAdd = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday'];
-                    else if (daysOption === 'weekends') daysToAdd = ['saturday', 'sunday'];
-                    else if (daysOption === 'mwf') daysToAdd = ['monday', 'wednesday', 'friday'];
-                    else if (daysOption === 'sat') daysToAdd = ['saturday'];
-                    
-                    // Add LIVE task to each day
-                    daysToAdd.forEach(day => {
-                        weeklyTasks[day].push({
-                            platform: platform,
-                            type: 'LIVE',
-                            time: time
-                        });
-                    });
-                }
             });
             
             await saveData();
