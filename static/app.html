@@ -1080,6 +1080,15 @@
             controls.style.display = checkbox.checked ? 'block' : 'none';
         }
 
+
+        function toggleLiveFreq(platform) {
+            const checkbox = document.getElementById('live_' + platform);
+            const container = document.getElementById('freq_live_' + platform + '_container');
+            if (container) {
+                container.style.display = checkbox.checked ? 'block' : 'none';
+            }
+        }
+
         async function init() {
             await loadData();
             updateClock();
@@ -1238,17 +1247,41 @@
             if (enabledPlatforms.length === 0) {
                 // Determine the main platform for each template
                 let mainPlatform;
-                if (templateId === 'of_creator_high') mainPlatform = 'onlyfans';
-                else if (templateId === 'of_creator_medium') mainPlatform = 'onlyfans';
-                else if (templateId === 'fansly_creator') mainPlatform = 'fansly';
-                else if (templateId === 'instagram_influencer') mainPlatform = 'instagram';
-                else if (templateId === 'tiktok_creator') mainPlatform = 'tiktok';
-                else if (templateId === 'multi_platform') mainPlatform = null; // No main for multi
-                else mainPlatform = 'onlyfans'; // Default to onlyfans
+                let autoEnableLive = false;
+                
+                if (templateId === 'of_creator_high') {
+                    mainPlatform = 'onlyfans';
+                    autoEnableLive = true; // LIVE is optimal for OF growth
+                } else if (templateId === 'of_creator_medium') {
+                    mainPlatform = 'onlyfans';
+                    autoEnableLive = false; // Medium volume - no LIVE by default
+                } else if (templateId === 'fansly_creator') {
+                    mainPlatform = 'fansly';
+                    autoEnableLive = true; // LIVE is optimal for Fansly growth
+                } else if (templateId === 'instagram_influencer') {
+                    mainPlatform = 'instagram';
+                    autoEnableLive = true; // LIVE is optimal for IG growth
+                } else if (templateId === 'tiktok_creator') {
+                    mainPlatform = 'tiktok';
+                    autoEnableLive = true; // LIVE is optimal for TikTok growth
+                } else if (templateId === 'multi_platform') {
+                    mainPlatform = null; // No main for multi
+                } else {
+                    mainPlatform = 'onlyfans'; // Default
+                }
                 
                 if (mainPlatform) {
                     enabledPlatforms = [mainPlatform];
                     updatePlatformCheckboxes();
+                    
+                    // Auto-enable LIVE for the main platform if optimal
+                    if (autoEnableLive) {
+                        const liveCheckbox = document.getElementById('live_' + mainPlatform);
+                        if (liveCheckbox) {
+                            liveCheckbox.checked = true;
+                            toggleLiveFreq(mainPlatform); // Show frequency dropdown
+                        }
+                    }
                 }
             }
             // Otherwise respect user's manual selections
