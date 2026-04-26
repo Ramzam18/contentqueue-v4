@@ -152,8 +152,8 @@ def signup():
     db.session.commit()
     
     # Create tokens
-    access_token = create_access_token(identity=user.id)
-    refresh_token = create_refresh_token(identity=user.id)
+    access_token = create_access_token(identity=str(user.id))
+    refresh_token = create_refresh_token(identity=str(user.id))
     
     return jsonify({
         'user': user.to_dict(),
@@ -174,8 +174,8 @@ def login():
     if not user or not user.check_password(password):
         return jsonify({'error': 'Invalid email or password'}), 401
     
-    access_token = create_access_token(identity=user.id)
-    refresh_token = create_refresh_token(identity=user.id)
+    access_token = create_access_token(identity=str(user.id))
+    refresh_token = create_refresh_token(identity=str(user.id))
     
     return jsonify({
         'user': user.to_dict(),
@@ -187,7 +187,7 @@ def login():
 @jwt_required(refresh=True)
 def refresh():
     """Refresh access token"""
-    user_id = get_jwt_identity()
+    user_id = int(get_jwt_identity())
     access_token = create_access_token(identity=user_id)
     return jsonify({'access_token': access_token}), 200
 
@@ -195,7 +195,7 @@ def refresh():
 @jwt_required()
 def get_current_user():
     """Get current user info"""
-    user_id = get_jwt_identity()
+    user_id = int(get_jwt_identity())
     user = User.query.get(user_id)
     
     if not user:
@@ -211,7 +211,7 @@ def get_current_user():
 @jwt_required()
 def get_schedule():
     """Get user's weekly schedule and settings"""
-    user_id = get_jwt_identity()
+    user_id = int(get_jwt_identity())
     schedule = Schedule.query.filter_by(user_id=user_id).first()
     
     # Auto-create schedule if missing (for users created before /init-db)
@@ -231,7 +231,7 @@ def get_schedule():
 @jwt_required()
 def update_schedule():
     """Update user's weekly schedule"""
-    user_id = get_jwt_identity()
+    user_id = int(get_jwt_identity())
     data = request.get_json()
     
     schedule = Schedule.query.filter_by(user_id=user_id).first()
@@ -258,7 +258,7 @@ def update_schedule():
 @jwt_required()
 def get_completed_tasks():
     """Get all completed tasks for user"""
-    user_id = get_jwt_identity()
+    user_id = int(get_jwt_identity())
     
     # Get date range (last 30 days)
     start_date = (datetime.utcnow() - timedelta(days=30)).strftime('%Y-%m-%d')
@@ -286,7 +286,7 @@ def get_completed_tasks():
 @jwt_required()
 def complete_task():
     """Mark task as completed or missed"""
-    user_id = get_jwt_identity()
+    user_id = int(get_jwt_identity())
     data = request.get_json()
     
     date_key = data.get('date_key')
@@ -330,7 +330,7 @@ def complete_task():
 @jwt_required()
 def create_checkout_session():
     """Create Stripe checkout session for subscription"""
-    user_id = get_jwt_identity()
+    user_id = int(get_jwt_identity())
     user = User.query.get(user_id)
     
     try:
@@ -393,7 +393,7 @@ def stripe_webhook():
 @jwt_required()
 def create_portal_session():
     """Create Stripe billing portal session"""
-    user_id = get_jwt_identity()
+    user_id = int(get_jwt_identity())
     user = User.query.get(user_id)
     
     if not user.stripe_customer_id:
