@@ -532,14 +532,16 @@
                         </label>
                         <div style="margin-left: 32px; padding: 8px; background: white; border-radius: 6px; font-size: 12px;">
                             <label style="display: flex; align-items: center; gap: 8px;">
-                                <input type="checkbox" id="live_instagram">
+                                <input type="checkbox" id="live_instagram" onchange="toggleLiveFreq('instagram')">
                                 <span style="font-weight: 600; flex: 1;">Include Instagram LIVE</span>
-                                <select id="freq_live_instagram" style="padding: 4px; font-size: 11px;">
+                            </label>
+                            <div id="freq_live_instagram_container" style="display: none; margin-top: 8px;">
+                                <select id="freq_live_instagram" style="padding: 4px; font-size: 11px; width: 100%;">
                                     <option value="light">Light</option>
                                     <option value="standard" selected>Standard</option>
                                     <option value="heavy">Heavy</option>
                                 </select>
-                            </label>
+                            </div>
                         </div>
                     </div>
                     
@@ -556,14 +558,16 @@
                         </label>
                         <div style="margin-left: 32px; padding: 8px; background: white; border-radius: 6px; font-size: 12px;">
                             <label style="display: flex; align-items: center; gap: 8px;">
-                                <input type="checkbox" id="live_tiktok">
+                                <input type="checkbox" id="live_tiktok" onchange="toggleLiveFreq('tiktok')">
                                 <span style="font-weight: 600; flex: 1;">Include TikTok LIVE</span>
-                                <select id="freq_live_tiktok" style="padding: 4px; font-size: 11px;">
+                            </label>
+                            <div id="freq_live_tiktok_container" style="display: none; margin-top: 8px;">
+                                <select id="freq_live_tiktok" style="padding: 4px; font-size: 11px; width: 100%;">
                                     <option value="light">Light</option>
                                     <option value="standard" selected>Standard</option>
                                     <option value="heavy">Heavy</option>
                                 </select>
-                            </label>
+                            </div>
                         </div>
                     </div>
                     
@@ -590,14 +594,16 @@
                         </label>
                         <div style="margin-left: 32px; padding: 8px; background: white; border-radius: 6px; font-size: 12px;">
                             <label style="display: flex; align-items: center; gap: 8px;">
-                                <input type="checkbox" id="live_onlyfans">
+                                <input type="checkbox" id="live_onlyfans" onchange="toggleLiveFreq('onlyfans')">
                                 <span style="font-weight: 600; flex: 1;">Include OnlyFans LIVE</span>
-                                <select id="freq_live_onlyfans" style="padding: 4px; font-size: 11px;">
+                            </label>
+                            <div id="freq_live_onlyfans_container" style="display: none; margin-top: 8px;">
+                                <select id="freq_live_onlyfans" style="padding: 4px; font-size: 11px; width: 100%;">
                                     <option value="light">Light</option>
                                     <option value="standard" selected>Standard</option>
                                     <option value="heavy">Heavy</option>
                                 </select>
-                            </label>
+                            </div>
                         </div>
                     </div>
                     
@@ -614,14 +620,16 @@
                         </label>
                         <div style="margin-left: 32px; padding: 8px; background: white; border-radius: 6px; font-size: 12px;">
                             <label style="display: flex; align-items: center; gap: 8px;">
-                                <input type="checkbox" id="live_fansly">
+                                <input type="checkbox" id="live_fansly" onchange="toggleLiveFreq('fansly')">
                                 <span style="font-weight: 600; flex: 1;">Include Fansly LIVE</span>
-                                <select id="freq_live_fansly" style="padding: 4px; font-size: 11px;">
+                            </label>
+                            <div id="freq_live_fansly_container" style="display: none; margin-top: 8px;">
+                                <select id="freq_live_fansly" style="padding: 4px; font-size: 11px; width: 100%;">
                                     <option value="light">Light</option>
                                     <option value="standard" selected>Standard</option>
                                     <option value="heavy">Heavy</option>
                                 </select>
-                            </label>
+                            </div>
                         </div>
                     </div>
                     
@@ -1226,9 +1234,19 @@
                 return;
             }
             
-            // Auto-check template platforms
-            enabledPlatforms = [...template.platforms];
-            updatePlatformCheckboxes();
+            // Only auto-check main platform if nothing is selected
+            if (enabledPlatforms.length === 0) {
+                // Determine the main platform from template
+                let mainPlatform;
+                if (templateId === 'fansly_creator') mainPlatform = 'fansly';
+                else if (templateId === 'instagram_influencer') mainPlatform = 'instagram';
+                else if (templateId === 'tiktok_creator') mainPlatform = 'tiktok';
+                else mainPlatform = template.platforms[0]; // First platform for others
+                
+                enabledPlatforms = [mainPlatform];
+                updatePlatformCheckboxes();
+            }
+            // Otherwise respect user's manual selections
             
             // Clear old tasks
             weeklyTasks = {};
