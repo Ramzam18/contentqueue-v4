@@ -533,6 +533,30 @@
                         <input type="checkbox" value="fansly" onchange="togglePlatform(this)">
                         <span style="font-weight: 600;">Fansly</span>
                     </label>
+                    <label style="display: flex; align-items: center; gap: 12px; padding: 12px; background: var(--cream); border-radius: 10px; cursor: pointer;">
+                        <input type="checkbox" value="reddit" onchange="togglePlatform(this)">
+                        <span style="font-weight: 600;">Reddit</span>
+                    </label>
+                    <label style="display: flex; align-items: center; gap: 12px; padding: 12px; background: var(--cream); border-radius: 10px; cursor: pointer;">
+                        <input type="checkbox" value="linkedin" onchange="togglePlatform(this)">
+                        <span style="font-weight: 600;">LinkedIn</span>
+                    </label>
+                    <label style="display: flex; align-items: center; gap: 12px; padding: 12px; background: var(--cream); border-radius: 10px; cursor: pointer;">
+                        <input type="checkbox" value="youtube" onchange="togglePlatform(this)">
+                        <span style="font-weight: 600;">YouTube</span>
+                    </label>
+                    <label style="display: flex; align-items: center; gap: 12px; padding: 12px; background: var(--cream); border-radius: 10px; cursor: pointer;">
+                        <input type="checkbox" value="pinterest" onchange="togglePlatform(this)">
+                        <span style="font-weight: 600;">Pinterest</span>
+                    </label>
+                    <label style="display: flex; align-items: center; gap: 12px; padding: 12px; background: var(--cream); border-radius: 10px; cursor: pointer;">
+                        <input type="checkbox" value="threads" onchange="togglePlatform(this)">
+                        <span style="font-weight: 600;">Threads</span>
+                    </label>
+                    <label style="display: flex; align-items: center; gap: 12px; padding: 12px; background: #9333ea; border-radius: 10px; cursor: pointer; color: white;">
+                        <input type="checkbox" value="filming" onchange="togglePlatform(this)">
+                        <span style="font-weight: 600;">📹 Filming/Content Creation</span>
+                    </label>
                 </div>
             </div>
 
@@ -548,6 +572,7 @@
                         <option value="of_creator_medium">OnlyFans Creator - Medium Volume</option>
                         <option value="instagram_influencer">Instagram Influencer</option>
                         <option value="tiktok_creator">TikTok Creator</option>
+                        <option value="fansly_creator">Fansly Creator</option>
                         <option value="multi_platform">Multi-Platform Pro</option>
                     </select>
                 </div>
@@ -600,6 +625,12 @@
                     <option value="twitter">X/Twitter</option>
                     <option value="onlyfans">OnlyFans</option>
                     <option value="fansly">Fansly</option>
+                    <option value="reddit">Reddit</option>
+                    <option value="linkedin">LinkedIn</option>
+                    <option value="youtube">YouTube</option>
+                    <option value="pinterest">Pinterest</option>
+                    <option value="threads">Threads</option>
+                    <option value="filming" style="background: #9333ea; color: white;">📹 Filming/Content Creation</option>
                 </select>
             </div>
             <div class="form-group">
@@ -679,7 +710,13 @@
             tiktok: '#00F2EA',
             twitter: '#1DA1F2',
             onlyfans: '#00AFF0',
-            fansly: '#0F8AFF'
+            fansly: '#0F8AFF',
+            reddit: '#FF4500',
+            linkedin: '#0A66C2',
+            youtube: '#FF0000',
+            pinterest: '#E60023',
+            threads: '#000000',
+            filming: '#9333ea'
         };
 
         const PLATFORM_NAMES = {
@@ -688,7 +725,13 @@
             tiktok: 'TikTok',
             twitter: 'X',
             onlyfans: 'OnlyFans',
-            fansly: 'Fansly'
+            fansly: 'Fansly',
+            reddit: 'Reddit',
+            linkedin: 'LinkedIn',
+            youtube: 'YouTube',
+            pinterest: 'Pinterest',
+            threads: 'Threads',
+            filming: '📹 Filming'
         };
 
         const DAYS = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
@@ -828,16 +871,19 @@
             },
             instagram_influencer: {
                 name: 'Instagram Influencer',
-                description: 'Focus on Instagram growth',
+                description: 'Focus on Instagram growth with lives',
                 platforms: ['instagram'],
                 schedule: {
                     monday: [
                         {platform: 'instagram', type: 'Feed Post', time: '10:00'},
+                        {platform: 'instagram', type: 'LIVE', time: '19:00'},
                         {platform: 'instagram', type: 'Story', time: '09:00'},
                         {platform: 'instagram', type: 'Story', time: '14:00'},
-                        {platform: 'instagram', type: 'Story', time: '19:00'}
+                        {platform: 'instagram', type: 'Story', time: '20:00'}
                     ],
-                    tuesday: [], wednesday: [], thursday: [], friday: [], saturday: [], sunday: []
+                    tuesday: [], wednesday: [], thursday: [], friday: [],
+                    saturday: [{platform: 'instagram', type: 'LIVE', time: '19:00'}],
+                    sunday: []
                 }
             },
             tiktok_creator: {
@@ -851,6 +897,25 @@
                         {platform: 'tiktok', type: 'Video', time: '19:00'}
                     ],
                     tuesday: [], wednesday: [], thursday: [], friday: [], saturday: [], sunday: []
+                }
+            },
+            fansly_creator: {
+                name: 'Fansly Creator',
+                description: 'Premium content strategy for Fansly growth',
+                platforms: ['fansly', 'onlyfans'],
+                schedule: {
+                    monday: [
+                        {platform: 'fansly', type: 'Post', time: '20:00'},
+                        {platform: 'fansly', type: 'Story', time: '21:00'},
+                        {platform: 'onlyfans', type: 'Post', time: '20:00'},
+                        {platform: 'onlyfans', type: 'Story', time: '21:00'}
+                    ],
+                    tuesday: [], wednesday: [], thursday: [], friday: [],
+                    saturday: [
+                        {platform: 'fansly', type: 'LIVE', time: '20:00'},
+                        {platform: 'onlyfans', type: 'LIVE', time: '20:00'}
+                    ],
+                    sunday: []
                 }
             },
             multi_platform: {
