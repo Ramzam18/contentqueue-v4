@@ -214,11 +214,13 @@ def get_schedule():
     user_id = get_jwt_identity()
     schedule = Schedule.query.filter_by(user_id=user_id).first()
     
+    # Auto-create schedule if missing (for users created before /init-db)
     if not schedule:
-        return jsonify({
-            'weeklyTasks': {},
-            'enabledPlatforms': []
-        }), 200
+        schedule = Schedule(user_id=user_id)
+        schedule.set_weekly_tasks({})
+        schedule.set_enabled_platforms([])
+        db.session.add(schedule)
+        db.session.commit()
     
     return jsonify({
         'weeklyTasks': schedule.get_weekly_tasks(),
