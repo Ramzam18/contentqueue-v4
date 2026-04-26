@@ -970,6 +970,67 @@
             renderWeeklyPlanner();
         }
 
+
+        // Cross-promotion schedules - supporting platforms drive traffic to main platform
+        const CROSS_PROMO = {
+            // When main platform is OnlyFans
+            onlyfans_support: {
+                instagram: [
+                    {type: 'Story', time: '10:00', note: 'Teaser for OF'},
+                    {type: 'Story', time: '15:00', note: 'Link in bio reminder'},
+                    {type: 'Story', time: '20:00', note: 'Premium content promo'}
+                ],
+                tiktok: [
+                    {type: 'Video', time: '11:00', note: 'Teaser/BTS for OF'},
+                    {type: 'Video', time: '19:00', note: 'Link in bio content'}
+                ],
+                twitter: [
+                    {type: 'Tweet', time: '09:00', note: 'OF teaser'},
+                    {type: 'Tweet', time: '14:00', note: 'Link to new OF post'},
+                    {type: 'Tweet', time: '20:00', note: 'Premium promo'}
+                ],
+                snapchat: [
+                    {type: 'Story', time: '12:00', note: 'OF teaser'},
+                    {type: 'Story', time: '18:00', note: 'Link reminder'}
+                ],
+                reddit: [
+                    {type: 'Post', time: '10:00', note: 'SFW teaser to OF'}
+                ]
+            },
+            // When main platform is TikTok
+            tiktok_support: {
+                instagram: [
+                    {type: 'Reel', time: '11:00', note: 'Repost TikTok'},
+                    {type: 'Story', time: '12:00', note: 'TikTok link'},
+                    {type: 'Story', time: '19:00', note: 'New TikTok alert'}
+                ],
+                twitter: [
+                    {type: 'Tweet', time: '11:30', note: 'Link to new TikTok'},
+                    {type: 'Tweet', time: '19:30', note: 'TikTok highlight'}
+                ],
+                snapchat: [
+                    {type: 'Story', time: '12:00', note: 'TikTok teaser'}
+                ],
+                youtube: [
+                    {type: 'Short', time: '12:00', note: 'TikTok compilation'}
+                ]
+            },
+            // When main platform is Instagram
+            instagram_support: {
+                tiktok: [
+                    {type: 'Video', time: '11:00', note: 'IG Reel repost'},
+                    {type: 'Video', time: '19:00', note: 'Follow my IG'}
+                ],
+                twitter: [
+                    {type: 'Tweet', time: '11:00', note: 'New IG post'},
+                    {type: 'Tweet', time: '19:00', note: 'IG story highlight'}
+                ],
+                pinterest: [
+                    {type: 'Pin', time: '10:00', note: 'IG post as pin'}
+                ]
+            }
+        };
+
         async function applyTemplate() {
             const templateId = document.getElementById('templateSelect').value;
             if (!templateId) {
@@ -977,7 +1038,6 @@
                 return;
             }
             
-            // Check if user has selected any platforms
             if (enabledPlatforms.length === 0) {
                 alert('Please select at least one platform from the checkboxes above first!');
                 return;
@@ -989,24 +1049,51 @@
                 return;
             }
             
-            if (!confirm(`Apply "${template.name}" template to your selected platforms? This will replace your current weekly schedule.`)) {
-                return;
+            // Identify main platform from template
+            const mainPlatform = template.platforms[0]; // First platform is the focus
+            const supportingPlatforms = enabledPlatforms.filter(p => !template.platforms.includes(p));
+            
+            let message = `Apply "${template.name}" template?\n\nMain: ${PLATFORM_NAMES[mainPlatform]}`;
+            if (supportingPlatforms.length > 0) {
+                const supportNames = supportingPlatforms.map(p => PLATFORM_NAMES[p]).join(', ');
+                message += `\nSupporting: ${supportNames} (auto cross-promotion)`;
             }
             
-            // DON'T override user's platform selection!
-            // Apply schedule ONLY for platforms the user has checked
+            if (!confirm(message)) return;
+            
+            // Start with template tasks for main platforms
             weeklyTasks = {};
             DAYS.forEach(day => {
                 weeklyTasks[day] = template.schedule[day]
                     .filter(task => enabledPlatforms.includes(task.platform))
-                    .map(task => ({...task})); // Clone to avoid reference issues
+                    .map(task => ({...task}));
             });
+            
+            // Add cross-promotion tasks for supporting platforms
+            const crossPromoKey = mainPlatform + '_support';
+            if (CROSS_PROMO[crossPromoKey] && supportingPlatforms.length > 0) {
+                supportingPlatforms.forEach(platform => {
+                    const promoTasks = CROSS_PROMO[crossPromoKey][platform];
+                    if (promoTasks) {
+                        DAYS.forEach(day => {
+                            promoTasks.forEach(task => {
+                                weeklyTasks[day].push({
+                                    platform: platform,
+                                    type: task.type,
+                                    time: task.time
+                                });
+                            });
+                        });
+                    }
+                });
+            }
             
             await saveData();
             renderWeeklyPlanner();
             renderQueue();
             
-            alert('Template applied to your selected platforms!');
+            const totalTasks = Object.values(weeklyTasks).reduce((sum, day) => sum + day.length, 0);
+            alert(`✅ Template applied!\n${totalTasks} tasks/week scheduled across ${enabledPlatforms.length} platforms`);
         }
 
         function updateClock() {
