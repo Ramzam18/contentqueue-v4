@@ -1226,11 +1226,13 @@
                 return;
             }
             
+            // Declare mainPlatform once for entire function
+            let mainPlatform;
+            let autoEnableLive = false;
+            
             // Only auto-check main platform if nothing is selected
             if (enabledPlatforms.length === 0) {
                 // Determine the main platform for each template
-                let mainPlatform;
-                let autoEnableLive = false;
                 
                 if (templateId === 'of_creator_high') {
                     mainPlatform = 'onlyfans';
@@ -1273,10 +1275,9 @@
             weeklyTasks = {};
             DAYS.forEach(day => weeklyTasks[day] = []);
             
-            // Identify main platform from template
-            let mainPlatform;
-            
-            // Special handling for Fansly Creator (has fansly + onlyfans)
+            // Identify main platform from template (reuse if already set)
+            if (!mainPlatform) {
+                // Special handling for Fansly Creator (has fansly + onlyfans)
             if (templateId === 'fansly_creator') {
                 mainPlatform = 'fansly';
             }
@@ -1285,8 +1286,9 @@
                 mainPlatform = template.platforms.find(p => enabledPlatforms.includes(p));
             }
             // Multi-platform template - no main, just apply all
-            else {
-                mainPlatform = null;
+                else {
+                    mainPlatform = null;
+                }
             }
             
             const supportingPlatforms = enabledPlatforms.filter(p => !template.platforms.includes(p));
