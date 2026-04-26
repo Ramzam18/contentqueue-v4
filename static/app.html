@@ -511,28 +511,35 @@
                 <div id="platformCheckboxes" style="display: grid; grid-template-columns: 1fr; gap: 12px;">
                     <label style="display: flex; align-items: center; gap: 12px; padding: 12px; background: var(--cream); border-radius: 10px; cursor: pointer;">
                         <input type="checkbox" value="snapchat" onchange="togglePlatform(this)">
-                        <span style="font-weight: 600;">Snapchat</span>
+                        <span style="font-weight: 600; flex: 1;">Snapchat</span>
+                        <select id="freq_snapchat" style="padding: 4px; font-size: 11px;">
+                            <option value="light">Light</option>
+                            <option value="standard" selected>Standard</option>
+                            <option value="heavy">Heavy</option>
+                        </select>
                     </label>
                     
                     <!-- Instagram with LIVE -->
                     <div style="background: var(--cream); border-radius: 10px; padding: 12px;">
                         <label style="display: flex; align-items: center; gap: 12px; cursor: pointer; margin-bottom: 8px;">
                             <input type="checkbox" value="instagram" onchange="togglePlatform(this)">
-                            <span style="font-weight: 600;">Instagram</span>
+                            <span style="font-weight: 600; flex: 1;">Instagram</span>
+                            <select id="freq_instagram" style="padding: 4px; font-size: 11px;">
+                                <option value="light">Light</option>
+                                <option value="standard" selected>Standard</option>
+                                <option value="heavy">Heavy</option>
+                            </select>
                         </label>
                         <div style="margin-left: 32px; padding: 8px; background: white; border-radius: 6px; font-size: 12px;">
                             <label style="display: flex; align-items: center; gap: 8px;">
-                                <input type="checkbox" id="live_instagram" onchange="toggleLive('instagram')">
-                                <span style="font-weight: 600;">Include Instagram LIVE</span>
-                            </label>
-                            <div id="live_instagram_controls" style="display: none; margin-left: 24px; margin-top: 8px;">
-                                <select id="live_instagram_days" style="padding: 4px; margin-right: 8px; font-size: 11px;">
-                                    <option value="weekdays">Weekdays</option>
-                                    <option value="weekends" selected>Weekends</option>
-                                    <option value="sat">Saturdays</option>
+                                <input type="checkbox" id="live_instagram">
+                                <span style="font-weight: 600; flex: 1;">Include Instagram LIVE</span>
+                                <select id="freq_live_instagram" style="padding: 4px; font-size: 11px;">
+                                    <option value="light">Light</option>
+                                    <option value="standard" selected>Standard</option>
+                                    <option value="heavy">Heavy</option>
                                 </select>
-                                <input type="time" id="live_instagram_time" value="19:00" style="padding: 4px; font-size: 11px;">
-                            </div>
+                            </label>
                         </div>
                     </div>
                     
@@ -540,46 +547,57 @@
                     <div style="background: var(--cream); border-radius: 10px; padding: 12px;">
                         <label style="display: flex; align-items: center; gap: 12px; cursor: pointer; margin-bottom: 8px;">
                             <input type="checkbox" value="tiktok" onchange="togglePlatform(this)">
-                            <span style="font-weight: 600;">TikTok</span>
+                            <span style="font-weight: 600; flex: 1;">TikTok</span>
+                            <select id="freq_tiktok" style="padding: 4px; font-size: 11px;">
+                                <option value="light">Light</option>
+                                <option value="standard" selected>Standard</option>
+                                <option value="heavy">Heavy</option>
+                            </select>
                         </label>
                         <div style="margin-left: 32px; padding: 8px; background: white; border-radius: 6px; font-size: 12px;">
                             <label style="display: flex; align-items: center; gap: 8px;">
-                                <input type="checkbox" id="live_tiktok" onchange="toggleLive('tiktok')">
-                                <span style="font-weight: 600;">Include TikTok LIVE</span>
-                            </label>
-                            <div id="live_tiktok_controls" style="display: none; margin-left: 24px; margin-top: 8px;">
-                                <select id="live_tiktok_days" style="padding: 4px; margin-right: 8px; font-size: 11px;">
-                                    <option value="weekdays" selected>Weekdays</option>
-                                    <option value="weekends">Weekends</option>
+                                <input type="checkbox" id="live_tiktok">
+                                <span style="font-weight: 600; flex: 1;">Include TikTok LIVE</span>
+                                <select id="freq_live_tiktok" style="padding: 4px; font-size: 11px;">
+                                    <option value="light">Light</option>
+                                    <option value="standard" selected>Standard</option>
+                                    <option value="heavy">Heavy</option>
                                 </select>
-                                <input type="time" id="live_tiktok_time" value="10:00" style="padding: 4px; font-size: 11px;">
-                            </div>
+                            </label>
                         </div>
                     </div>
                     
                     <label style="display: flex; align-items: center; gap: 12px; padding: 12px; background: var(--cream); border-radius: 10px; cursor: pointer;">
                         <input type="checkbox" value="twitter" onchange="togglePlatform(this)">
-                        <span style="font-weight: 600;">X/Twitter</span>
+                        <span style="font-weight: 600; flex: 1;">X/Twitter</span>
+                        <select id="freq_twitter" style="padding: 4px; font-size: 11px;">
+                            <option value="light">Light</option>
+                            <option value="standard" selected>Standard</option>
+                            <option value="heavy">Heavy</option>
+                        </select>
                     </label>
                     
                     <!-- OnlyFans with LIVE -->
                     <div style="background: var(--cream); border-radius: 10px; padding: 12px;">
                         <label style="display: flex; align-items: center; gap: 12px; cursor: pointer; margin-bottom: 8px;">
                             <input type="checkbox" value="onlyfans" onchange="togglePlatform(this)">
-                            <span style="font-weight: 600;">OnlyFans</span>
+                            <span style="font-weight: 600; flex: 1;">OnlyFans</span>
+                            <select id="freq_onlyfans" style="padding: 4px; font-size: 11px;">
+                                <option value="light">Light</option>
+                                <option value="standard" selected>Standard</option>
+                                <option value="heavy">Heavy</option>
+                            </select>
                         </label>
                         <div style="margin-left: 32px; padding: 8px; background: white; border-radius: 6px; font-size: 12px;">
                             <label style="display: flex; align-items: center; gap: 8px;">
-                                <input type="checkbox" id="live_onlyfans" onchange="toggleLive('onlyfans')">
-                                <span style="font-weight: 600;">Include OnlyFans LIVE</span>
-                            </label>
-                            <div id="live_onlyfans_controls" style="display: none; margin-left: 24px; margin-top: 8px;">
-                                <select id="live_onlyfans_days" style="padding: 4px; margin-right: 8px; font-size: 11px;">
-                                    <option value="weekends" selected>Weekends</option>
-                                    <option value="sat">Saturdays</option>
+                                <input type="checkbox" id="live_onlyfans">
+                                <span style="font-weight: 600; flex: 1;">Include OnlyFans LIVE</span>
+                                <select id="freq_live_onlyfans" style="padding: 4px; font-size: 11px;">
+                                    <option value="light">Light</option>
+                                    <option value="standard" selected>Standard</option>
+                                    <option value="heavy">Heavy</option>
                                 </select>
-                                <input type="time" id="live_onlyfans_time" value="20:00" style="padding: 4px; font-size: 11px;">
-                            </div>
+                            </label>
                         </div>
                     </div>
                     
@@ -587,42 +605,70 @@
                     <div style="background: var(--cream); border-radius: 10px; padding: 12px;">
                         <label style="display: flex; align-items: center; gap: 12px; cursor: pointer; margin-bottom: 8px;">
                             <input type="checkbox" value="fansly" onchange="togglePlatform(this)">
-                            <span style="font-weight: 600;">Fansly</span>
+                            <span style="font-weight: 600; flex: 1;">Fansly</span>
+                            <select id="freq_fansly" style="padding: 4px; font-size: 11px;">
+                                <option value="light">Light</option>
+                                <option value="standard" selected>Standard</option>
+                                <option value="heavy">Heavy</option>
+                            </select>
                         </label>
                         <div style="margin-left: 32px; padding: 8px; background: white; border-radius: 6px; font-size: 12px;">
                             <label style="display: flex; align-items: center; gap: 8px;">
-                                <input type="checkbox" id="live_fansly" onchange="toggleLive('fansly')">
-                                <span style="font-weight: 600;">Include Fansly LIVE</span>
-                            </label>
-                            <div id="live_fansly_controls" style="display: none; margin-left: 24px; margin-top: 8px;">
-                                <select id="live_fansly_days" style="padding: 4px; margin-right: 8px; font-size: 11px;">
-                                    <option value="weekends" selected>Weekends</option>
-                                    <option value="sat">Saturdays</option>
+                                <input type="checkbox" id="live_fansly">
+                                <span style="font-weight: 600; flex: 1;">Include Fansly LIVE</span>
+                                <select id="freq_live_fansly" style="padding: 4px; font-size: 11px;">
+                                    <option value="light">Light</option>
+                                    <option value="standard" selected>Standard</option>
+                                    <option value="heavy">Heavy</option>
                                 </select>
-                                <input type="time" id="live_fansly_time" value="20:00" style="padding: 4px; font-size: 11px;">
-                            </div>
+                            </label>
                         </div>
                     </div>
                     
                     <label style="display: flex; align-items: center; gap: 12px; padding: 12px; background: var(--cream); border-radius: 10px; cursor: pointer;">
                         <input type="checkbox" value="reddit" onchange="togglePlatform(this)">
-                        <span style="font-weight: 600;">Reddit</span>
+                        <span style="font-weight: 600; flex: 1;">Reddit</span>
+                        <select id="freq_reddit" style="padding: 4px; font-size: 11px;">
+                            <option value="light">Light</option>
+                            <option value="standard" selected>Standard</option>
+                            <option value="heavy">Heavy</option>
+                        </select>
                     </label>
                     <label style="display: flex; align-items: center; gap: 12px; padding: 12px; background: var(--cream); border-radius: 10px; cursor: pointer;">
                         <input type="checkbox" value="linkedin" onchange="togglePlatform(this)">
-                        <span style="font-weight: 600;">LinkedIn</span>
+                        <span style="font-weight: 600; flex: 1;">LinkedIn</span>
+                        <select id="freq_linkedin" style="padding: 4px; font-size: 11px;">
+                            <option value="light">Light</option>
+                            <option value="standard" selected>Standard</option>
+                            <option value="heavy">Heavy</option>
+                        </select>
                     </label>
                     <label style="display: flex; align-items: center; gap: 12px; padding: 12px; background: var(--cream); border-radius: 10px; cursor: pointer;">
                         <input type="checkbox" value="youtube" onchange="togglePlatform(this)">
-                        <span style="font-weight: 600;">YouTube</span>
+                        <span style="font-weight: 600; flex: 1;">YouTube</span>
+                        <select id="freq_youtube" style="padding: 4px; font-size: 11px;">
+                            <option value="light">Light</option>
+                            <option value="standard" selected>Standard</option>
+                            <option value="heavy">Heavy</option>
+                        </select>
                     </label>
                     <label style="display: flex; align-items: center; gap: 12px; padding: 12px; background: var(--cream); border-radius: 10px; cursor: pointer;">
                         <input type="checkbox" value="pinterest" onchange="togglePlatform(this)">
-                        <span style="font-weight: 600;">Pinterest</span>
+                        <span style="font-weight: 600; flex: 1;">Pinterest</span>
+                        <select id="freq_pinterest" style="padding: 4px; font-size: 11px;">
+                            <option value="light">Light</option>
+                            <option value="standard" selected>Standard</option>
+                            <option value="heavy">Heavy</option>
+                        </select>
                     </label>
                     <label style="display: flex; align-items: center; gap: 12px; padding: 12px; background: var(--cream); border-radius: 10px; cursor: pointer;">
                         <input type="checkbox" value="threads" onchange="togglePlatform(this)">
-                        <span style="font-weight: 600;">Threads</span>
+                        <span style="font-weight: 600; flex: 1;">Threads</span>
+                        <select id="freq_threads" style="padding: 4px; font-size: 11px;">
+                            <option value="light">Light</option>
+                            <option value="standard" selected>Standard</option>
+                            <option value="heavy">Heavy</option>
+                        </select>
                     </label>
                     <label style="display: flex; align-items: center; gap: 12px; padding: 12px; background: #9333ea; border-radius: 10px; cursor: pointer; color: white;">
                         <input type="checkbox" value="filming" onchange="togglePlatform(this)">
