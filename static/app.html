@@ -1236,15 +1236,20 @@
             
             // Only auto-check main platform if nothing is selected
             if (enabledPlatforms.length === 0) {
-                // Determine the main platform from template
+                // Determine the main platform for each template
                 let mainPlatform;
-                if (templateId === 'fansly_creator') mainPlatform = 'fansly';
+                if (templateId === 'of_creator_high') mainPlatform = 'onlyfans';
+                else if (templateId === 'of_creator_medium') mainPlatform = 'onlyfans';
+                else if (templateId === 'fansly_creator') mainPlatform = 'fansly';
                 else if (templateId === 'instagram_influencer') mainPlatform = 'instagram';
                 else if (templateId === 'tiktok_creator') mainPlatform = 'tiktok';
-                else mainPlatform = template.platforms[0]; // First platform for others
+                else if (templateId === 'multi_platform') mainPlatform = null; // No main for multi
+                else mainPlatform = 'onlyfans'; // Default to onlyfans
                 
-                enabledPlatforms = [mainPlatform];
-                updatePlatformCheckboxes();
+                if (mainPlatform) {
+                    enabledPlatforms = [mainPlatform];
+                    updatePlatformCheckboxes();
+                }
             }
             // Otherwise respect user's manual selections
             
