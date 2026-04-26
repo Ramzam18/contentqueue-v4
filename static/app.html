@@ -1059,7 +1059,20 @@
                     {type: 'Story', time: '18:00', note: 'Link reminder'}
                 ],
                 reddit: [
-                    {type: 'Post', time: '10:00', note: 'SFW teaser to OF'}
+                    {type: 'Post', time: '10:00', note: 'SFW teaser to OF'},
+                    {type: 'Post', time: '20:00', note: 'Premium link'}
+                ],
+                linkedin: [
+                    {type: 'Post', time: '09:00', note: 'Professional content link'}
+                ],
+                youtube: [
+                    {type: 'Short', time: '11:00', note: 'BTS/Teaser for OF'}
+                ],
+                pinterest: [
+                    {type: 'Pin', time: '10:00', note: 'Visual teaser to OF'}
+                ],
+                threads: [
+                    {type: 'Post', time: '12:00', note: 'OF link share'}
                 ],
                 onlyfans: [
                     {type: 'Post', time: '20:00', note: 'Premium content'},
@@ -1100,6 +1113,48 @@
                 ]
             },
             // When main platform is Instagram
+            // When main platform is Fansly
+            fansly_support: {
+                instagram: [
+                    {type: 'Story', time: '10:00', note: 'Teaser for Fansly'},
+                    {type: 'Story', time: '20:00', note: 'Premium promo'}
+                ],
+                tiktok: [
+                    {type: 'Video', time: '11:00', note: 'Teaser/BTS for Fansly'}
+                ],
+                twitter: [
+                    {type: 'Tweet', time: '09:00', note: 'Fansly teaser'},
+                    {type: 'Tweet', time: '20:00', note: 'Premium promo'}
+                ],
+                snapchat: [
+                    {type: 'Story', time: '12:00', note: 'Fansly teaser'}
+                ],
+                reddit: [
+                    {type: 'Post', time: '10:00', note: 'SFW teaser to Fansly'}
+                ],
+                linkedin: [
+                    {type: 'Post', time: '09:00', note: 'Professional link'}
+                ],
+                youtube: [
+                    {type: 'Short', time: '11:00', note: 'BTS for Fansly'}
+                ],
+                pinterest: [
+                    {type: 'Pin', time: '10:00', note: 'Visual teaser'}
+                ],
+                threads: [
+                    {type: 'Post', time: '12:00', note: 'Fansly link'}
+                ],
+                onlyfans: [
+                    {type: 'Post', time: '20:00', note: 'Premium content'},
+                    {type: 'Story', time: '21:00', note: 'Also on Fansly'}
+                ],
+                fansly: [
+                    {type: 'Post', time: '20:00', note: 'Premium content'},
+                    {type: 'Story', time: '21:00', note: 'Teaser'}
+                ]
+            }
+        };
+
             instagram_support: {
                 tiktok: [
                     {type: 'Video', time: '11:00', note: 'IG Reel repost'},
@@ -1145,14 +1200,18 @@
             }
             
             // Identify main platform from template
-            // For multi-platform templates, use first SELECTED platform from template
-            // For focused templates (1-2 platforms), use the template's focus
             let mainPlatform;
-            if (template.platforms.length <= 2) {
-                // Focused template (TikTok Creator, Instagram Influencer, etc)
+            
+            // Special handling for Fansly Creator (has fansly + onlyfans)
+            if (templateId === 'fansly_creator') {
+                mainPlatform = 'fansly';
+            }
+            // For focused templates (1-2 platforms), use the template's focus
+            else if (template.platforms.length <= 2) {
                 mainPlatform = template.platforms.find(p => enabledPlatforms.includes(p));
-            } else {
-                // Multi-platform template - no main, just apply all
+            }
+            // Multi-platform template - no main, just apply all
+            else {
                 mainPlatform = null;
             }
             
