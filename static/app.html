@@ -903,18 +903,24 @@
                 return;
             }
             
-            const template = TEMPLATES[templateId];
-            if (!template) return;
-            
-            if (!confirm(`Apply "${template.name}" template? This will replace your current weekly schedule.`)) {
+            // Check if user has selected any platforms
+            if (enabledPlatforms.length === 0) {
+                alert('Please select at least one platform from the checkboxes above first!');
                 return;
             }
             
-            // Set enabled platforms from template
-            enabledPlatforms = [...template.platforms];
-            updatePlatformCheckboxes();
+            const template = TEMPLATES[templateId];
+            if (!template) {
+                alert('Template not found!');
+                return;
+            }
             
-            // Apply schedule, filtering by enabled platforms
+            if (!confirm(`Apply "${template.name}" template to your selected platforms? This will replace your current weekly schedule.`)) {
+                return;
+            }
+            
+            // DON'T override user's platform selection!
+            // Apply schedule ONLY for platforms the user has checked
             weeklyTasks = {};
             DAYS.forEach(day => {
                 weeklyTasks[day] = template.schedule[day]
@@ -926,7 +932,7 @@
             renderWeeklyPlanner();
             renderQueue();
             
-            alert('Template applied! Go to Weekly Planner to customize.');
+            alert('Template applied to your selected platforms!');
         }
 
         function updateClock() {
