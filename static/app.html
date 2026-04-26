@@ -1220,16 +1220,19 @@
                 return;
             }
             
-            if (enabledPlatforms.length === 0) {
-                alert('Please select at least one platform from the checkboxes above first!');
-                return;
-            }
-            
             const template = TEMPLATES[templateId];
             if (!template) {
                 alert('Template not found!');
                 return;
             }
+            
+            // Auto-check template platforms
+            enabledPlatforms = [...template.platforms];
+            updatePlatformCheckboxes();
+            
+            // Clear old tasks
+            weeklyTasks = {};
+            DAYS.forEach(day => weeklyTasks[day] = []);
             
             // Identify main platform from template
             let mainPlatform;
@@ -1270,6 +1273,21 @@
                 weeklyTasks[day] = template.schedule[day]
                     .filter(task => enabledPlatforms.includes(task.platform))
                     .map(task => ({...task}));
+            });
+            
+            // For platforms that are enabled but not in template, add base schedules
+            enabledPlatforms.forEach(platform => {
+                if (!template.platforms.includes(platform) && BASE_SCHEDULES[platform]) {
+                    DAYS.forEach(day => {
+                        BASE_SCHEDULES[platform].forEach(task => {
+                            weeklyTasks[day].push({
+                                platform: platform,
+                                type: task.type,
+                                time: task.time
+                            });
+                        });
+                    });
+                }
             });
             
             // Add cross-promotion tasks for supporting platforms (only if focused template)
