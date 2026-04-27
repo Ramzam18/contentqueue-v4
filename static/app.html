@@ -970,18 +970,43 @@
                 schedule: {
                     monday: [
                         {platform: 'snapchat', type: 'Story', time: '12:00'},
-                        {platform: 'snapchat', type: 'Story', time: '20:00'},
                         {platform: 'instagram', type: 'Feed Post', time: '11:00'},
-                        {platform: 'instagram', type: 'Story', time: '18:00'},
-                        {platform: 'tiktok', type: 'Video', time: '11:00'},
-                        {platform: 'tiktok', type: 'Video', time: '19:00'},
+                        {platform: 'tiktok', type: 'Video', time: '14:00'},
                         {platform: 'twitter', type: 'Tweet', time: '09:00'},
-                        {platform: 'twitter', type: 'Tweet', time: '15:00'},
                         {platform: 'onlyfans', type: 'Post', time: '20:00'},
+                        {platform: 'onlyfans', type: 'Story', time: '21:00'},
                         {platform: 'fansly', type: 'Post', time: '20:00'}
                     ],
-                    tuesday: [], wednesday: [], thursday: [], friday: [], saturday: [],
-                    sunday: []
+                    tuesday: [
+                        {platform: 'onlyfans', type: 'Story', time: '21:00'}
+                    ],
+                    wednesday: [
+                        {platform: 'snapchat', type: 'Story', time: '12:00'},
+                        {platform: 'instagram', type: 'Story', time: '18:00'},
+                        {platform: 'tiktok', type: 'Video', time: '18:00'},
+                        {platform: 'twitter', type: 'Tweet', time: '15:00'},
+                        {platform: 'onlyfans', type: 'Post', time: '20:00'},
+                        {platform: 'onlyfans', type: 'Story', time: '21:00'},
+                        {platform: 'fansly', type: 'Story', time: '21:00'}
+                    ],
+                    thursday: [
+                        {platform: 'onlyfans', type: 'Story', time: '21:00'}
+                    ],
+                    friday: [
+                        {platform: 'snapchat', type: 'Story', time: '20:00'},
+                        {platform: 'instagram', type: 'Reel', time: '19:00'},
+                        {platform: 'tiktok', type: 'Video', time: '18:00'},
+                        {platform: 'twitter', type: 'Tweet', time: '18:00'},
+                        {platform: 'onlyfans', type: 'Post', time: '20:00'},
+                        {platform: 'onlyfans', type: 'Story', time: '21:00'},
+                        {platform: 'fansly', type: 'Post', time: '20:00'}
+                    ],
+                    saturday: [
+                        {platform: 'onlyfans', type: 'Story', time: '21:00'}
+                    ],
+                    sunday: [
+                        {platform: 'onlyfans', type: 'Story', time: '21:00'}
+                    ]
                 }
             },
             instagram_influencer: {
@@ -1052,6 +1077,7 @@
                 if (s.wednesday.length === 0) s.wednesday = [...s.monday];
                 if (s.thursday.length === 0) s.thursday = [...s.monday];
                 if (s.friday.length === 0) s.friday = [...s.monday];
+                if (s.saturday.length === 0) s.saturday = [...s.monday];
                 if (s.sunday.length === 0) s.sunday = [...s.monday];
             }
         });
@@ -1264,6 +1290,10 @@
             fansly: [
                 {type: 'Post', time: '20:00'},
                 {type: 'Story', time: '21:00'}
+            ],
+            filming: [
+                {type: 'Content Creation', time: '10:00'},
+                {type: 'Content Creation', time: '14:00'}
             ]
         };
         async function applyTemplate() {
@@ -1305,13 +1335,13 @@
                 mainPlatform = 'onlyfans';
             }
             
-            // Auto-check platform ONLY if starting from empty
-            if (enabledPlatforms.length === 0 && mainPlatform) {
-                enabledPlatforms = [mainPlatform];
+            // ALWAYS ensure main platform is checked for this template
+            if (mainPlatform && !enabledPlatforms.includes(mainPlatform)) {
+                enabledPlatforms.push(mainPlatform);
                 updatePlatformCheckboxes();
             }
             
-            // ALWAYS manage LIVE checkbox for the main platform (even if platforms already checked)
+            // ALWAYS manage LIVE checkbox for the main platform
             if (mainPlatform) {
                 const liveCheckbox = document.getElementById('live_' + mainPlatform);
                 if (liveCheckbox) {
