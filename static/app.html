@@ -1213,6 +1213,59 @@
             }
         };
 
+        // Base schedules for each platform (default posting times, NO LIVE)
+        const BASE_SCHEDULES = {
+            snapchat: [
+                {type: 'Story', time: '09:00'},
+                {type: 'Story', time: '12:00'},
+                {type: 'Story', time: '18:00'},
+                {type: 'Story', time: '20:00'}
+            ],
+            instagram: [
+                {type: 'Story', time: '09:00'},
+                {type: 'Feed Post', time: '11:00'},
+                {type: 'Reel', time: '19:00'},
+                {type: 'Story', time: '21:00'}
+            ],
+            tiktok: [
+                {type: 'Video', time: '14:00'},
+                {type: 'Video', time: '18:00'}
+            ],
+            twitter: [
+                {type: 'Tweet', time: '09:00'},
+                {type: 'Tweet', time: '12:00'},
+                {type: 'Tweet', time: '15:00'},
+                {type: 'Tweet', time: '18:00'},
+                {type: 'Tweet', time: '21:00'}
+            ],
+            reddit: [
+                {type: 'Post', time: '10:00'},
+                {type: 'Post', time: '14:00'}
+            ],
+            linkedin: [
+                {type: 'Post', time: '09:00'}
+            ],
+            youtube: [
+                {type: 'Short', time: '11:00'},
+                {type: 'Video', time: '18:00'}
+            ],
+            pinterest: [
+                {type: 'Pin', time: '10:00'},
+                {type: 'Pin', time: '20:00'}
+            ],
+            threads: [
+                {type: 'Post', time: '12:00'},
+                {type: 'Post', time: '17:00'}
+            ],
+            onlyfans: [
+                {type: 'Post', time: '20:00'},
+                {type: 'Story', time: '21:00'}
+            ],
+            fansly: [
+                {type: 'Post', time: '20:00'},
+                {type: 'Story', time: '21:00'}
+            ]
+        };
         async function applyTemplate() {
             const templateId = document.getElementById('templateSelect').value;
             if (!templateId) {
@@ -1230,46 +1283,42 @@
             let mainPlatform;
             let autoEnableLive = false;
             
-            // Only auto-check main platform if nothing is selected
-            if (enabledPlatforms.length === 0) {
-                // Determine the main platform for each template
-                
-                if (templateId === 'of_creator_high') {
-                    mainPlatform = 'onlyfans';
-                    autoEnableLive = true; // LIVE is optimal for OF growth
-                } else if (templateId === 'of_creator_medium') {
-                    mainPlatform = 'onlyfans';
-                    autoEnableLive = false; // Medium volume - no LIVE by default
-                } else if (templateId === 'fansly_creator') {
-                    mainPlatform = 'fansly';
-                    autoEnableLive = true; // LIVE is optimal for Fansly growth
-                } else if (templateId === 'instagram_influencer') {
-                    mainPlatform = 'instagram';
-                    autoEnableLive = true; // LIVE is optimal for IG growth
-                } else if (templateId === 'tiktok_creator') {
-                    mainPlatform = 'tiktok';
-                    autoEnableLive = true; // LIVE is optimal for TikTok growth
-                } else if (templateId === 'multi_platform') {
-                    mainPlatform = null; // No main for multi
-                } else {
-                    mainPlatform = 'onlyfans'; // Default
-                }
-                
-                if (mainPlatform) {
-                    enabledPlatforms = [mainPlatform];
-                    updatePlatformCheckboxes();
-                    
-                    // Auto-enable LIVE for the main platform if optimal
-                    if (autoEnableLive) {
-                        const liveCheckbox = document.getElementById('live_' + mainPlatform);
-                        if (liveCheckbox) {
-                            liveCheckbox.checked = true;
-                            toggleLiveFreq(mainPlatform); // Show frequency dropdown
-                        }
-                    }
+            // ALWAYS determine template settings (not just when empty)
+            if (templateId === 'of_creator_high') {
+                mainPlatform = 'onlyfans';
+                autoEnableLive = true;
+            } else if (templateId === 'of_creator_medium') {
+                mainPlatform = 'onlyfans';
+                autoEnableLive = false;
+            } else if (templateId === 'fansly_creator') {
+                mainPlatform = 'fansly';
+                autoEnableLive = true;
+            } else if (templateId === 'instagram_influencer') {
+                mainPlatform = 'instagram';
+                autoEnableLive = true;
+            } else if (templateId === 'tiktok_creator') {
+                mainPlatform = 'tiktok';
+                autoEnableLive = true;
+            } else if (templateId === 'multi_platform') {
+                mainPlatform = null;
+            } else {
+                mainPlatform = 'onlyfans';
+            }
+            
+            // Auto-check platform ONLY if starting from empty
+            if (enabledPlatforms.length === 0 && mainPlatform) {
+                enabledPlatforms = [mainPlatform];
+                updatePlatformCheckboxes();
+            }
+            
+            // ALWAYS manage LIVE checkbox for the main platform (even if platforms already checked)
+            if (mainPlatform) {
+                const liveCheckbox = document.getElementById('live_' + mainPlatform);
+                if (liveCheckbox) {
+                    liveCheckbox.checked = autoEnableLive;
+                    toggleLiveFreq(mainPlatform);
                 }
             }
-            // Otherwise respect user's manual selections
             
             // Clear old tasks
             weeklyTasks = {};
