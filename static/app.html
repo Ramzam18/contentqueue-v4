@@ -1426,9 +1426,17 @@
                     .map(task => ({...task}));
             });
             
-            // For platforms that are enabled but not in template, add base schedules
+            // Track which platforms already have scheduled content
+            const alreadyScheduledPlatforms = new Set(template.platforms);
+            
+            // Mark supporting platforms as already scheduled (they'll be added below)
+            if (mainPlatform && supportingPlatforms.length > 0) {
+                supportingPlatforms.forEach(p => alreadyScheduledPlatforms.add(p));
+            }
+            
+            // For platforms that are enabled but not already scheduled, add base schedules
             enabledPlatforms.forEach(platform => {
-                if (!template.platforms.includes(platform) && BASE_SCHEDULES[platform]) {
+                if (!alreadyScheduledPlatforms.has(platform) && BASE_SCHEDULES[platform]) {
                     DAYS.forEach(day => {
                         BASE_SCHEDULES[platform].forEach(task => {
                             weeklyTasks[day].push({
