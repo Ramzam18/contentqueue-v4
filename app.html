@@ -448,50 +448,15 @@
     <div class="header">
         <div class="app-title">CONTENT QUEUE</div>
         <div class="app-subtitle">v4.0 - Production</div>
-        <div style="display: flex; align-items: center; justify-content: center; gap: 10px; flex-wrap: wrap;">
-            <div class="current-time" id="currentTime">--:-- -- EST</div>
-            <select id="timezone-selector" style="padding: 5px 8px; border-radius: 6px; border: 2px solid var(--dark); font-family: 'Space Mono', monospace; font-size: 11px; background: white; cursor: pointer;">
-                <option value="America/New_York">EST</option>
-                <option value="America/Los_Angeles">PST</option>
-                <option value="America/Chicago">CST</option>
-                <option value="America/Denver">MST</option>
-                <option value="Europe/London">GMT</option>
-                <option value="Asia/Bangkok">Bangkok</option>
-                <option value="Asia/Tokyo">Tokyo</option>
-                <option value="Australia/Sydney">Sydney</option>
-            </select>
-        </div>
-        <button onclick="logout()" class="logout-btn">Logout</button>
-    <style>
-        .logout-btn {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            padding: 8px 16px;
-            background: var(--dark);
-            color: white;
-            border: none;
-            border-radius: 8px;
-            font-family: 'Space Mono', monospace;
-            font-size: 12px;
-            cursor: pointer;
-            z-index: 1000;
-        }
-        @media (max-width: 768px) {
-            .logout-btn {
-                top: 10px;
-                right: 10px;
-                padding: 6px 10px;
-                font-size: 10px;
-            }
-        }
-    </style>
+        <div class="current-time" id="currentTime">--:-- -- EST</div>
+        <button onclick="logout()" style="position: absolute; top: 20px; right: 20px; padding: 8px 16px; background: var(--dark); color: white; border: none; border-radius: 8px; font-family: 'Space Mono', monospace; font-size: 12px; cursor: pointer;">Logout</button>
     </div>
 
     <div class="tab-nav">
         <button class="tab-btn active" onclick="switchTab('queue')">Queue</button>
         <button class="tab-btn" onclick="switchTab('planner')">Weekly Planner</button>
         <button class="tab-btn" onclick="switchTab('settings')">Settings</button>
+        <button class="tab-btn" onclick="switchTab('stats')">Stats</button>
     </div>
 
     <!-- QUEUE VIEW -->
@@ -540,209 +505,56 @@
         <div style="max-width: 600px; margin: 0 auto;">
             
             <div style="background: white; border: 2px solid var(--dark); border-radius: 16px; padding: 24px; margin-bottom: 24px;">
-                <div style="font-size: 20px; font-weight: 700; margin-bottom: 16px;">Time Preferences</div>
-                <div style="margin-bottom: 24px;">
-                    <label style="display: flex; align-items: center; gap: 12px; padding: 12px; background: var(--cream); border-radius: 10px;">
-                        <span style="font-weight: 600; flex: 1;">Time Format:</span>
-                        <select id="setting_time_format" style="padding: 6px 10px; border-radius: 6px; border: 2px solid var(--dark); font-family: 'Space Mono', monospace; font-size: 12px;">
-                            <option value="12">12-hour (2:00 PM)</option>
-                            <option value="24">24-hour (14:00)</option>
-                        </select>
-                    </label>
-                </div>
-                
-                <div style="font-size: 20px; font-weight: 700; margin-bottom: 16px;">SMS Notifications</div>
-                <div style="margin-bottom: 24px;">
-                    <label style="display: block; margin-bottom: 12px; padding: 12px; background: var(--cream); border-radius: 10px;">
-                        <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 8px;">
-                            <input type="checkbox" id="sms_enabled">
-                            <span style="font-weight: 600;">Enable SMS Reminders</span>
-                        </div>
-                        <input type="tel" id="phone_number" placeholder="+1 (555) 123-4567" style="width: 100%; padding: 10px; border: 2px solid var(--dark); border-radius: 6px; font-family: 'Space Mono', monospace; font-size: 14px; margin-top: 8px;">
-                        <div style="font-size: 11px; color: #666; margin-top: 4px;">Get reminders 30 mins before tasks are due</div>
-                    </label>
-                    <button onclick="savePhoneSettings()" style="padding: 10px 20px; background: var(--dark); color: white; border: none; border-radius: 8px; font-family: 'Space Mono', monospace; font-size: 12px; cursor: pointer; margin-right: 8px;">Save Phone</button>
-                    <button onclick="testSMS()" style="padding: 10px 20px; background: var(--pink); color: white; border: none; border-radius: 8px; font-family: 'Space Mono', monospace; font-size: 12px; cursor: pointer;">Send Test SMS</button>
-                </div>
-                
                 <div style="font-size: 20px; font-weight: 700; margin-bottom: 16px;">Your Platforms</div>
                 <div style="font-size: 13px; color: #666; margin-bottom: 20px;">Select which platforms you post to</div>
                 
-                <div id="platformCheckboxes" style="display: grid; grid-template-columns: 1fr; gap: 12px;">
+                <div id="platformCheckboxes" style="display: grid; gap: 12px;">
                     <label style="display: flex; align-items: center; gap: 12px; padding: 12px; background: var(--cream); border-radius: 10px; cursor: pointer;">
                         <input type="checkbox" value="snapchat" onchange="togglePlatform(this)">
-                        <span style="font-weight: 600; flex: 1;">Snapchat</span>
-                        <select id="freq_snapchat" style="padding: 4px; font-size: 11px;">
-                            <option value="light">Light</option>
-                            <option value="standard" selected>Standard</option>
-                            <option value="heavy">Heavy</option>
-                        </select>
+                        <span style="font-weight: 600;">Snapchat</span>
                     </label>
-                    
-                    <!-- Instagram with LIVE -->
-                    <div style="background: var(--cream); border-radius: 10px; padding: 12px;">
-                        <label style="display: flex; align-items: center; gap: 12px; cursor: pointer; margin-bottom: 8px;">
-                            <input type="checkbox" value="instagram" onchange="togglePlatform(this)">
-                            <span style="font-weight: 600; flex: 1;">Instagram</span>
-                            <select id="freq_instagram" style="padding: 4px; font-size: 11px;">
-                                <option value="light">Light</option>
-                                <option value="standard" selected>Standard</option>
-                                <option value="heavy">Heavy</option>
-                            </select>
-                        </label>
-                        <div style="margin-left: 32px; padding: 8px; background: white; border-radius: 6px; font-size: 12px;">
-                            <label style="display: flex; align-items: center; gap: 8px;">
-                                <input type="checkbox" id="live_instagram" onchange="toggleLiveFreq('instagram')">
-                                <span style="font-weight: 600; flex: 1;">Include Instagram LIVE</span>
-                            </label>
-                            <div id="freq_live_instagram_container" style="display: none; margin-top: 8px;">
-                                <select id="freq_live_instagram" style="padding: 4px; font-size: 11px; width: 100%;">
-                                    <option value="light">Light</option>
-                                    <option value="standard" selected>Standard</option>
-                                    <option value="heavy">Heavy</option>
-                                </select>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- TikTok with LIVE -->
-                    <div style="background: var(--cream); border-radius: 10px; padding: 12px;">
-                        <label style="display: flex; align-items: center; gap: 12px; cursor: pointer; margin-bottom: 8px;">
-                            <input type="checkbox" value="tiktok" onchange="togglePlatform(this)">
-                            <span style="font-weight: 600; flex: 1;">TikTok</span>
-                            <select id="freq_tiktok" style="padding: 4px; font-size: 11px;">
-                                <option value="light">Light</option>
-                                <option value="standard" selected>Standard</option>
-                                <option value="heavy">Heavy</option>
-                            </select>
-                        </label>
-                        <div style="margin-left: 32px; padding: 8px; background: white; border-radius: 6px; font-size: 12px;">
-                            <label style="display: flex; align-items: center; gap: 8px;">
-                                <input type="checkbox" id="live_tiktok" onchange="toggleLiveFreq('tiktok')">
-                                <span style="font-weight: 600; flex: 1;">Include TikTok LIVE</span>
-                            </label>
-                            <div id="freq_live_tiktok_container" style="display: none; margin-top: 8px;">
-                                <select id="freq_live_tiktok" style="padding: 4px; font-size: 11px; width: 100%;">
-                                    <option value="light">Light</option>
-                                    <option value="standard" selected>Standard</option>
-                                    <option value="heavy">Heavy</option>
-                                </select>
-                            </div>
-                        </div>
-                    </div>
-                    
+                    <label style="display: flex; align-items: center; gap: 12px; padding: 12px; background: var(--cream); border-radius: 10px; cursor: pointer;">
+                        <input type="checkbox" value="instagram" onchange="togglePlatform(this)">
+                        <span style="font-weight: 600;">Instagram</span>
+                    </label>
+                    <label style="display: flex; align-items: center; gap: 12px; padding: 12px; background: var(--cream); border-radius: 10px; cursor: pointer;">
+                        <input type="checkbox" value="tiktok" onchange="togglePlatform(this)">
+                        <span style="font-weight: 600;">TikTok</span>
+                    </label>
                     <label style="display: flex; align-items: center; gap: 12px; padding: 12px; background: var(--cream); border-radius: 10px; cursor: pointer;">
                         <input type="checkbox" value="twitter" onchange="togglePlatform(this)">
-                        <span style="font-weight: 600; flex: 1;">X/Twitter</span>
-                        <select id="freq_twitter" style="padding: 4px; font-size: 11px;">
-                            <option value="light">Light</option>
-                            <option value="standard" selected>Standard</option>
-                            <option value="heavy">Heavy</option>
-                        </select>
+                        <span style="font-weight: 600;">X/Twitter</span>
                     </label>
-                    
-                    <!-- OnlyFans with LIVE -->
-                    <div style="background: var(--cream); border-radius: 10px; padding: 12px;">
-                        <label style="display: flex; align-items: center; gap: 12px; cursor: pointer; margin-bottom: 8px;">
-                            <input type="checkbox" value="onlyfans" onchange="togglePlatform(this)">
-                            <span style="font-weight: 600; flex: 1;">OnlyFans</span>
-                            <select id="freq_onlyfans" style="padding: 4px; font-size: 11px;">
-                                <option value="light">Light</option>
-                                <option value="standard" selected>Standard</option>
-                                <option value="heavy">Heavy</option>
-                            </select>
-                        </label>
-                        <div style="margin-left: 32px; padding: 8px; background: white; border-radius: 6px; font-size: 12px;">
-                            <label style="display: flex; align-items: center; gap: 8px;">
-                                <input type="checkbox" id="live_onlyfans" onchange="toggleLiveFreq('onlyfans')">
-                                <span style="font-weight: 600; flex: 1;">Include OnlyFans LIVE</span>
-                            </label>
-                            <div id="freq_live_onlyfans_container" style="display: none; margin-top: 8px;">
-                                <select id="freq_live_onlyfans" style="padding: 4px; font-size: 11px; width: 100%;">
-                                    <option value="light">Light</option>
-                                    <option value="standard" selected>Standard</option>
-                                    <option value="heavy">Heavy</option>
-                                </select>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Fansly with LIVE -->
-                    <div style="background: var(--cream); border-radius: 10px; padding: 12px;">
-                        <label style="display: flex; align-items: center; gap: 12px; cursor: pointer; margin-bottom: 8px;">
-                            <input type="checkbox" value="fansly" onchange="togglePlatform(this)">
-                            <span style="font-weight: 600; flex: 1;">Fansly</span>
-                            <select id="freq_fansly" style="padding: 4px; font-size: 11px;">
-                                <option value="light">Light</option>
-                                <option value="standard" selected>Standard</option>
-                                <option value="heavy">Heavy</option>
-                            </select>
-                        </label>
-                        <div style="margin-left: 32px; padding: 8px; background: white; border-radius: 6px; font-size: 12px;">
-                            <label style="display: flex; align-items: center; gap: 8px;">
-                                <input type="checkbox" id="live_fansly" onchange="toggleLiveFreq('fansly')">
-                                <span style="font-weight: 600; flex: 1;">Include Fansly LIVE</span>
-                            </label>
-                            <div id="freq_live_fansly_container" style="display: none; margin-top: 8px;">
-                                <select id="freq_live_fansly" style="padding: 4px; font-size: 11px; width: 100%;">
-                                    <option value="light">Light</option>
-                                    <option value="standard" selected>Standard</option>
-                                    <option value="heavy">Heavy</option>
-                                </select>
-                            </div>
-                        </div>
-                    </div>
-                    
+                    <label style="display: flex; align-items: center; gap: 12px; padding: 12px; background: var(--cream); border-radius: 10px; cursor: pointer;">
+                        <input type="checkbox" value="onlyfans" onchange="togglePlatform(this)">
+                        <span style="font-weight: 600;">OnlyFans</span>
+                    </label>
+                    <label style="display: flex; align-items: center; gap: 12px; padding: 12px; background: var(--cream); border-radius: 10px; cursor: pointer;">
+                        <input type="checkbox" value="fansly" onchange="togglePlatform(this)">
+                        <span style="font-weight: 600;">Fansly</span>
+                    </label>
                     <label style="display: flex; align-items: center; gap: 12px; padding: 12px; background: var(--cream); border-radius: 10px; cursor: pointer;">
                         <input type="checkbox" value="reddit" onchange="togglePlatform(this)">
-                        <span style="font-weight: 600; flex: 1;">Reddit</span>
-                        <select id="freq_reddit" style="padding: 4px; font-size: 11px;">
-                            <option value="light">Light</option>
-                            <option value="standard" selected>Standard</option>
-                            <option value="heavy">Heavy</option>
-                        </select>
+                        <span style="font-weight: 600;">Reddit</span>
                     </label>
                     <label style="display: flex; align-items: center; gap: 12px; padding: 12px; background: var(--cream); border-radius: 10px; cursor: pointer;">
                         <input type="checkbox" value="linkedin" onchange="togglePlatform(this)">
-                        <span style="font-weight: 600; flex: 1;">LinkedIn</span>
-                        <select id="freq_linkedin" style="padding: 4px; font-size: 11px;">
-                            <option value="light">Light</option>
-                            <option value="standard" selected>Standard</option>
-                            <option value="heavy">Heavy</option>
-                        </select>
+                        <span style="font-weight: 600;">LinkedIn</span>
                     </label>
                     <label style="display: flex; align-items: center; gap: 12px; padding: 12px; background: var(--cream); border-radius: 10px; cursor: pointer;">
                         <input type="checkbox" value="youtube" onchange="togglePlatform(this)">
-                        <span style="font-weight: 600; flex: 1;">YouTube</span>
-                        <select id="freq_youtube" style="padding: 4px; font-size: 11px;">
-                            <option value="light">Light</option>
-                            <option value="standard" selected>Standard</option>
-                            <option value="heavy">Heavy</option>
-                        </select>
+                        <span style="font-weight: 600;">YouTube</span>
                     </label>
                     <label style="display: flex; align-items: center; gap: 12px; padding: 12px; background: var(--cream); border-radius: 10px; cursor: pointer;">
                         <input type="checkbox" value="pinterest" onchange="togglePlatform(this)">
-                        <span style="font-weight: 600; flex: 1;">Pinterest</span>
-                        <select id="freq_pinterest" style="padding: 4px; font-size: 11px;">
-                            <option value="light">Light</option>
-                            <option value="standard" selected>Standard</option>
-                            <option value="heavy">Heavy</option>
-                        </select>
+                        <span style="font-weight: 600;">Pinterest</span>
                     </label>
                     <label style="display: flex; align-items: center; gap: 12px; padding: 12px; background: var(--cream); border-radius: 10px; cursor: pointer;">
                         <input type="checkbox" value="threads" onchange="togglePlatform(this)">
-                        <span style="font-weight: 600; flex: 1;">Threads</span>
-                        <select id="freq_threads" style="padding: 4px; font-size: 11px;">
-                            <option value="light">Light</option>
-                            <option value="standard" selected>Standard</option>
-                            <option value="heavy">Heavy</option>
-                        </select>
-                    </label>
-                    <label style="display: flex; align-items: center; gap: 12px; padding: 12px; background: #9333ea; border-radius: 10px; cursor: pointer; color: white;">
-                        <input type="checkbox" value="filming" onchange="togglePlatform(this)">
-                        <span style="font-weight: 600;">📹 Filming/Content Creation</span>
+                        <span style="font-weight: 600;">Threads</span>
                     </label>
                 </div>
+            </div>
 
             <div style="background: white; border: 2px solid var(--dark); border-radius: 16px; padding: 24px;">
                 <div style="font-size: 20px; font-weight: 700; margin-bottom: 16px;">Quick Setup Templates</div>
@@ -750,15 +562,20 @@
                 
                 <div class="form-group">
                     <label class="form-label">Select Template</label>
-                    <select class="form-select" id="templateSelect">
+                    <select class="form-select" id="templateSelect" onchange="showTemplateDescription()">
                         <option value="">-- Choose a template --</option>
                         <option value="of_creator_high">OnlyFans Creator - High Volume</option>
                         <option value="of_creator_medium">OnlyFans Creator - Medium Volume</option>
                         <option value="instagram_influencer">Instagram Influencer</option>
                         <option value="tiktok_creator">TikTok Creator</option>
-                        <option value="fansly_creator">Fansly Creator</option>
                         <option value="multi_platform">Multi-Platform Pro</option>
                     </select>
+                </div>
+                
+                <div id="templateDescription" style="display: none; margin-top: 16px; padding: 16px; background: white; border: 2px solid var(--dark); border-radius: 12px;">
+                    <div style="font-size: 14px; font-weight: 600; margin-bottom: 8px;" id="templateDescTitle"></div>
+                    <div style="font-size: 13px; color: #666; margin-bottom: 12px;" id="templateDescText"></div>
+                    <div style="font-size: 12px; font-family: 'Space Mono', monospace;" id="templateDescPlatforms"></div>
                 </div>
 
                 <button onclick="applyTemplate()" style="width: 100%; padding: 16px; background: var(--accent); color: white; border: none; border-radius: 12px; font-family: 'Space Mono', monospace; font-size: 13px; font-weight: 700; text-transform: uppercase; cursor: pointer; margin-top: 12px;">
@@ -775,9 +592,73 @@
 
     <!-- STATS VIEW -->
     <div class="view" id="statsView">
-        <div style="padding: 40px 20px; text-align: center; opacity: 0.5;">
-            <div style="font-size: 64px; margin-bottom: 16px;">📊</div>
-            <div style="font-size: 18px;">Stats coming soon</div>
+        <div style="padding: 20px;">
+            <h2 style="font-size: 24px; margin-bottom: 20px; text-align: center;">📊 Growth Strategy Guide</h2>
+            
+            <div style="margin-bottom: 30px; padding: 16px; background: white; border: 2px solid var(--dark); border-radius: 12px;">
+                <h3 style="font-size: 18px; margin-bottom: 12px;">🔥 High Growth (Maximum Engagement)</h3>
+                <div style="font-size: 14px; opacity: 0.8; margin-bottom: 12px;">Aggressive posting for rapid audience building</div>
+                <div style="display: grid; gap: 8px; font-size: 14px; font-family: 'Space Mono', monospace;">
+                    <div><strong>Instagram:</strong> 2-3 Posts/day + 5-7 Stories/day</div>
+                    <div><strong>TikTok:</strong> 3-5 Videos/day + 1 LIVE/day</div>
+                    <div><strong>X/Twitter:</strong> 8-12 Tweets/day</div>
+                    <div><strong>Snapchat:</strong> 5-8 Stories/day</div>
+                    <div><strong>OnlyFans:</strong> 2-3 Posts/day + 3-5 Stories/day + 2-3 Lives/week</div>
+                    <div><strong>Fansly:</strong> 2-3 Posts/day + 3-5 Stories/day + 2-3 Lives/week</div>
+                    <div><strong>Reddit:</strong> 2-3 Posts/day (different subreddits)</div>
+                    <div><strong>LinkedIn:</strong> 1-2 Posts/day</div>
+                    <div><strong>YouTube:</strong> 1 Video/day or 5-7/week</div>
+                    <div><strong>Pinterest:</strong> 10-15 Pins/day</div>
+                    <div><strong>Threads:</strong> 5-8 Posts/day</div>
+                </div>
+            </div>
+
+            <div style="margin-bottom: 30px; padding: 16px; background: white; border: 2px solid var(--dark); border-radius: 12px;">
+                <h3 style="font-size: 18px; margin-bottom: 12px;">⚡ Medium Growth (Sustainable)</h3>
+                <div style="font-size: 14px; opacity: 0.8; margin-bottom: 12px;">Consistent posting for steady audience growth</div>
+                <div style="display: grid; gap: 8px; font-size: 14px; font-family: 'Space Mono', monospace;">
+                    <div><strong>Instagram:</strong> 1 Post/day + 3-4 Stories/day</div>
+                    <div><strong>TikTok:</strong> 2-3 Videos/day + 3-4 Lives/week</div>
+                    <div><strong>X/Twitter:</strong> 5-7 Tweets/day</div>
+                    <div><strong>Snapchat:</strong> 3-5 Stories/day</div>
+                    <div><strong>OnlyFans:</strong> 1-2 Posts/day + 2-3 Stories/day + 1-2 Lives/week</div>
+                    <div><strong>Fansly:</strong> 1-2 Posts/day + 2-3 Stories/day + 1-2 Lives/week</div>
+                    <div><strong>Reddit:</strong> 1-2 Posts/day</div>
+                    <div><strong>LinkedIn:</strong> 1 Post/day or 5/week</div>
+                    <div><strong>YouTube:</strong> 3-4 Videos/week</div>
+                    <div><strong>Pinterest:</strong> 5-8 Pins/day</div>
+                    <div><strong>Threads:</strong> 3-5 Posts/day</div>
+                </div>
+            </div>
+
+            <div style="padding: 16px; background: white; border: 2px solid var(--dark); border-radius: 12px;">
+                <h3 style="font-size: 18px; margin-bottom: 12px;">💼 Low Growth (Maintenance)</h3>
+                <div style="font-size: 14px; opacity: 0.8; margin-bottom: 12px;">Minimum posting to maintain audience</div>
+                <div style="display: grid; gap: 8px; font-size: 14px; font-family: 'Space Mono', monospace;">
+                    <div><strong>Instagram:</strong> 1 Post/day + 2-3 Stories/day</div>
+                    <div><strong>TikTok:</strong> 1-2 Videos/day + 1-2 Lives/week</div>
+                    <div><strong>X/Twitter:</strong> 3-5 Tweets/day</div>
+                    <div><strong>Snapchat:</strong> 2-3 Stories/day</div>
+                    <div><strong>OnlyFans:</strong> 1 Post/day + 1-2 Stories/day + 1 Live/week</div>
+                    <div><strong>Fansly:</strong> 1 Post/day + 1-2 Stories/day + 1 Live/week</div>
+                    <div><strong>Reddit:</strong> 1 Post/day</div>
+                    <div><strong>LinkedIn:</strong> 3-4 Posts/week</div>
+                    <div><strong>YouTube:</strong> 1-2 Videos/week</div>
+                    <div><strong>Pinterest:</strong> 3-5 Pins/day</div>
+                    <div><strong>Threads:</strong> 2-3 Posts/day</div>
+                </div>
+            </div>
+
+            <div style="margin-top: 30px; padding: 16px; background: #fef2f2; border: 2px solid var(--accent); border-radius: 12px;">
+                <h4 style="font-size: 16px; margin-bottom: 8px;">💡 Pro Tips</h4>
+                <ul style="font-size: 14px; line-height: 1.6; padding-left: 20px;">
+                    <li>Consistency matters more than volume</li>
+                    <li>Post during peak hours for your audience (usually 9am-12pm, 6pm-9pm EST)</li>
+                    <li>Premium platforms (OF/Fansly) need 1-2 lives per week minimum</li>
+                    <li>Stories disappear in 24hrs - post more liberally</li>
+                    <li>Quality > Quantity - one great post beats three mediocre ones</li>
+                </ul>
+            </div>
         </div>
     </div>
 
@@ -814,7 +695,6 @@
                     <option value="youtube">YouTube</option>
                     <option value="pinterest">Pinterest</option>
                     <option value="threads">Threads</option>
-                    <option value="filming" style="background: #9333ea; color: white;">📹 Filming/Content Creation</option>
                 </select>
             </div>
             <div class="form-group">
@@ -885,7 +765,7 @@
             localStorage.removeItem('access_token');
             localStorage.removeItem('refresh_token');
             localStorage.removeItem('user');
-            window.location.href = '/login';
+            window.location.href = '/app';
         }
         
         const PLATFORM_COLORS = {
@@ -899,8 +779,7 @@
             linkedin: '#0A66C2',
             youtube: '#FF0000',
             pinterest: '#E60023',
-            threads: '#000000',
-            filming: '#9333ea'
+            threads: '#000000'
         };
 
         const PLATFORM_NAMES = {
@@ -914,8 +793,7 @@
             linkedin: 'LinkedIn',
             youtube: 'YouTube',
             pinterest: 'Pinterest',
-            threads: 'Threads',
-            filming: '📹 Filming'
+            threads: 'Threads'
         };
 
         const DAYS = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
@@ -942,7 +820,9 @@
                         {platform: 'instagram', type: 'Feed Post', time: '11:00'},
                         {platform: 'instagram', type: 'Story', time: '12:00'},
                         {platform: 'instagram', type: 'Story', time: '18:00'},
-                        {platform: 'instagram', type: 'Story', time: '21:00'},                        {platform: 'tiktok', type: 'Video', time: '11:00'},
+                        {platform: 'instagram', type: 'Story', time: '21:00'},
+                        {platform: 'tiktok', type: 'LIVE', time: '10:00'},
+                        {platform: 'tiktok', type: 'Video', time: '11:00'},
                         {platform: 'tiktok', type: 'Video', time: '19:00'},
                         {platform: 'twitter', type: 'Tweet', time: '09:00'},
                         {platform: 'twitter', type: 'Tweet', time: '12:00'},
@@ -962,7 +842,9 @@
                         {platform: 'instagram', type: 'Feed Post', time: '11:00'},
                         {platform: 'instagram', type: 'Story', time: '12:00'},
                         {platform: 'instagram', type: 'Story', time: '18:00'},
-                        {platform: 'instagram', type: 'Story', time: '21:00'},                        {platform: 'tiktok', type: 'Video', time: '11:00'},
+                        {platform: 'instagram', type: 'Story', time: '21:00'},
+                        {platform: 'tiktok', type: 'LIVE', time: '10:00'},
+                        {platform: 'tiktok', type: 'Video', time: '11:00'},
                         {platform: 'tiktok', type: 'Video', time: '19:00'},
                         {platform: 'twitter', type: 'Tweet', time: '09:00'},
                         {platform: 'twitter', type: 'Tweet', time: '12:00'},
@@ -995,8 +877,12 @@
                         {platform: 'twitter', type: 'Tweet', time: '12:00'},
                         {platform: 'twitter', type: 'Tweet', time: '15:00'},
                         {platform: 'twitter', type: 'Tweet', time: '18:00'},
-                        {platform: 'twitter', type: 'Tweet', time: '21:00'},                        {platform: 'onlyfans', type: 'Post', time: '20:00'},
-                        {platform: 'onlyfans', type: 'Story', time: '21:00'},                        {platform: 'fansly', type: 'Post', time: '20:00'},
+                        {platform: 'twitter', type: 'Tweet', time: '21:00'},
+                        {platform: 'onlyfans', type: 'LIVE', time: '20:00'},
+                        {platform: 'onlyfans', type: 'Post', time: '20:00'},
+                        {platform: 'onlyfans', type: 'Story', time: '21:00'},
+                        {platform: 'fansly', type: 'LIVE', time: '20:00'},
+                        {platform: 'fansly', type: 'Post', time: '20:00'},
                         {platform: 'fansly', type: 'Story', time: '21:00'}
                     ],
                     sunday: [
@@ -1025,200 +911,111 @@
 ,
             of_creator_medium: {
                 name: 'OnlyFans Creator - Medium Volume',
-                description: 'Balanced schedule for sustainable growth',
+                description: 'Balanced schedule: 1-2 posts daily per platform',
                 platforms: ['snapchat', 'instagram', 'tiktok', 'twitter', 'onlyfans', 'fansly'],
                 schedule: {
                     monday: [
                         {platform: 'snapchat', type: 'Story', time: '12:00'},
-                        {platform: 'instagram', type: 'Feed Post', time: '11:00'},
-                        {platform: 'tiktok', type: 'Video', time: '14:00'},
-                        {platform: 'twitter', type: 'Tweet', time: '09:00'},
-                        {platform: 'onlyfans', type: 'Post', time: '20:00'},
-                        {platform: 'onlyfans', type: 'Story', time: '21:00'},
-                        {platform: 'fansly', type: 'Post', time: '20:00'}
-                    ],
-                    tuesday: [
-                        {platform: 'onlyfans', type: 'Story', time: '21:00'}
-                    ],
-                    wednesday: [
-                        {platform: 'snapchat', type: 'Story', time: '12:00'},
-                        {platform: 'instagram', type: 'Story', time: '18:00'},
-                        {platform: 'tiktok', type: 'Video', time: '18:00'},
-                        {platform: 'twitter', type: 'Tweet', time: '15:00'},
-                        {platform: 'onlyfans', type: 'Post', time: '20:00'},
-                        {platform: 'onlyfans', type: 'Story', time: '21:00'},
-                        {platform: 'fansly', type: 'Story', time: '21:00'}
-                    ],
-                    thursday: [
-                        {platform: 'onlyfans', type: 'Story', time: '21:00'}
-                    ],
-                    friday: [
                         {platform: 'snapchat', type: 'Story', time: '20:00'},
-                        {platform: 'instagram', type: 'Reel', time: '19:00'},
-                        {platform: 'tiktok', type: 'Video', time: '18:00'},
-                        {platform: 'twitter', type: 'Tweet', time: '18:00'},
+                        {platform: 'instagram', type: 'Feed Post', time: '11:00'},
+                        {platform: 'instagram', type: 'Story', time: '18:00'},
+                        {platform: 'tiktok', type: 'Video', time: '11:00'},
+                        {platform: 'tiktok', type: 'Video', time: '19:00'},
+                        {platform: 'twitter', type: 'Tweet', time: '09:00'},
+                        {platform: 'twitter', type: 'Tweet', time: '15:00'},
+                        {platform: 'twitter', type: 'Tweet', time: '21:00'},
                         {platform: 'onlyfans', type: 'Post', time: '20:00'},
-                        {platform: 'onlyfans', type: 'Story', time: '21:00'},
                         {platform: 'fansly', type: 'Post', time: '20:00'}
                     ],
-                    saturday: [
-                        {platform: 'onlyfans', type: 'Story', time: '21:00'}
-                    ],
-                    sunday: [
-                        {platform: 'onlyfans', type: 'Story', time: '21:00'}
-                    ]
+                    tuesday: [],
+                    wednesday: [],
+                    thursday: [],
+                    friday: [],
+                    saturday: [{platform: 'onlyfans', type: 'LIVE', time: '20:00'}, {platform: 'fansly', type: 'LIVE', time: '20:00'}],
+                    sunday: []
                 }
             },
-                        instagram_influencer: {
+            instagram_influencer: {
                 name: 'Instagram Influencer',
-                description: 'Optimal Instagram growth strategy 2026',
+                description: '1 feed post + 3-4 stories daily for Instagram growth',
                 platforms: ['instagram'],
                 schedule: {
                     monday: [
-                        {platform: 'instagram', type: 'Feed Post', time: '11:00'},
+                        {platform: 'instagram', type: 'Feed Post', time: '10:00'},
                         {platform: 'instagram', type: 'Story', time: '09:00'},
                         {platform: 'instagram', type: 'Story', time: '14:00'},
                         {platform: 'instagram', type: 'Story', time: '19:00'}
                     ],
-                    tuesday: [
-                        {platform: 'instagram', type: 'Story', time: '09:00'},
-                        {platform: 'instagram', type: 'Story', time: '14:00'},
-                        {platform: 'instagram', type: 'Story', time: '19:00'}
-                    ],
-                    wednesday: [
-                        {platform: 'instagram', type: 'Reel', time: '19:00'},
-                        {platform: 'instagram', type: 'Story', time: '09:00'},
-                        {platform: 'instagram', type: 'Story', time: '14:00'},
-                        {platform: 'instagram', type: 'Story', time: '19:00'}
-                    ],
-                    thursday: [
-                        {platform: 'instagram', type: 'Story', time: '09:00'},
-                        {platform: 'instagram', type: 'Story', time: '14:00'},
-                        {platform: 'instagram', type: 'Story', time: '19:00'}
-                    ],
-                    friday: [
-                        {platform: 'instagram', type: 'Feed Post', time: '11:00'},
-                        {platform: 'instagram', type: 'Reel', time: '19:00'},
-                        {platform: 'instagram', type: 'Story', time: '09:00'},
-                        {platform: 'instagram', type: 'Story', time: '14:00'},
-                        {platform: 'instagram', type: 'Story', time: '19:00'}
-                    ],
-                    saturday: [
-                        {platform: 'instagram', type: 'Story', time: '09:00'},
-                        {platform: 'instagram', type: 'Story', time: '14:00'},
-                        {platform: 'instagram', type: 'Story', time: '19:00'}
-                    ],
-                    sunday: [
-                        {platform: 'instagram', type: 'Story', time: '09:00'},
-                        {platform: 'instagram', type: 'Story', time: '14:00'},
-                        {platform: 'instagram', type: 'Story', time: '19:00'}
-                    ]
+                    tuesday: [],
+                    wednesday: [],
+                    thursday: [],
+                    friday: [],
+                    saturday: [],
+                    sunday: []
                 }
             },
             tiktok_creator: {
                 name: 'TikTok Creator',
-                description: 'TikTok growth strategy',
+                description: '2-3 videos + lives daily for maximum TikTok reach',
                 platforms: ['tiktok'],
                 schedule: {
-                    monday: [                        {platform: 'tiktok', type: 'Video', time: '11:00'},
+                    monday: [
+                        {platform: 'tiktok', type: 'LIVE', time: '10:00'},
+                        {platform: 'tiktok', type: 'Video', time: '11:00'},
                         {platform: 'tiktok', type: 'Video', time: '19:00'}
                     ],
-                    tuesday: [], wednesday: [], thursday: [], friday: [], saturday: [], sunday: []
-                }
-            },
-            fansly_creator: {
-                name: 'Fansly Creator',
-                description: 'Premium content strategy for Fansly growth',
-                platforms: ['fansly', 'onlyfans'],
-                schedule: {
-                    monday: [
-                        {platform: 'fansly', type: 'Post', time: '20:00'},
-                        {platform: 'fansly', type: 'Story', time: '21:00'},
-                        {platform: 'onlyfans', type: 'Post', time: '20:00'},
-                        {platform: 'onlyfans', type: 'Story', time: '21:00'}
-                    ],
-                    tuesday: [], wednesday: [], thursday: [], friday: [],
-                    saturday: [                    ],
+                    tuesday: [],
+                    wednesday: [],
+                    thursday: [],
+                    friday: [],
+                    saturday: [],
                     sunday: []
                 }
             },
             multi_platform: {
                 name: 'Multi-Platform Pro',
-                description: 'Balanced multi-platform presence',
+                description: 'Balanced presence across all platforms',
                 platforms: ['snapchat', 'instagram', 'tiktok', 'twitter', 'onlyfans', 'fansly'],
                 schedule: {
                     monday: [
                         {platform: 'snapchat', type: 'Story', time: '12:00'},
                         {platform: 'instagram', type: 'Feed Post', time: '11:00'},
+                        {platform: 'instagram', type: 'Story', time: '18:00'},
                         {platform: 'tiktok', type: 'Video', time: '11:00'},
                         {platform: 'twitter', type: 'Tweet', time: '09:00'},
+                        {platform: 'twitter', type: 'Tweet', time: '15:00'},
                         {platform: 'onlyfans', type: 'Post', time: '20:00'},
                         {platform: 'fansly', type: 'Post', time: '20:00'}
                     ],
-                    tuesday: [], wednesday: [], thursday: [], friday: [], saturday: [], sunday: []
+                    tuesday: [],
+                    wednesday: [],
+                    thursday: [],
+                    friday: [],
+                    saturday: [],
+                    sunday: []
                 }
             }
-
         };
 
-        // Fill in repeating days for ALL templates
-        Object.keys(TEMPLATES).forEach(id => {
-            const s = TEMPLATES[id].schedule;
-            if (s.monday.length > 0) {
-                if (s.tuesday.length === 0) s.tuesday = [...s.monday];
-                if (s.wednesday.length === 0) s.wednesday = [...s.monday];
-                if (s.thursday.length === 0) s.thursday = [...s.monday];
-                if (s.friday.length === 0) s.friday = [...s.monday];
-                if (s.saturday.length === 0) s.saturday = [...s.monday];
-                if (s.sunday.length === 0) s.sunday = [...s.monday];
+        TEMPLATES.of_creator_high.schedule.friday = [...TEMPLATES.of_creator_high.schedule.monday];
+
+        // Fill in repeating days for all templates
+        Object.keys(TEMPLATES).forEach(templateId => {
+            const template = TEMPLATES[templateId];
+            if (template.schedule.monday.length > 0 && template.schedule.tuesday.length === 0) {
+                // Copy Monday to other weekdays if they're empty
+                template.schedule.tuesday = [...template.schedule.monday];
+                template.schedule.wednesday = [...template.schedule.monday];
+                template.schedule.thursday = [...template.schedule.monday];
+                template.schedule.friday = [...template.schedule.monday];
+                if (template.schedule.sunday.length === 0) {
+                    template.schedule.sunday = [...template.schedule.monday];
+                }
             }
         });
 
-
-        function toggleLive(platform) {
-            const checkbox = document.getElementById(`live_${platform}`);
-            const controls = document.getElementById(`live_${platform}_controls`);
-            controls.style.display = checkbox.checked ? 'block' : 'none';
-        }
-
-
-        function toggleLiveFreq(platform) {
-            const checkbox = document.getElementById('live_' + platform);
-            const container = document.getElementById('freq_live_' + platform + '_container');
-            if (container) {
-                container.style.display = checkbox.checked ? 'block' : 'none';
-            }
-        }
-
         async function init() {
-            // Load and apply time preferences
-            const savedTimeFormat = localStorage.getItem('timeFormat') || '12';
-            const savedTimezone = localStorage.getItem('timezone') || 'America/New_York';
-            
-            if (document.getElementById('setting_time_format')) {
-                document.getElementById('setting_time_format').value = savedTimeFormat;
-            }
-            if (document.getElementById('timezone-selector')) {
-                document.getElementById('timezone-selector').value = savedTimezone;
-                
-                // Add timezone change listener
-                document.getElementById('timezone-selector').addEventListener('change', (e) => {
-                    localStorage.setItem('timezone', e.target.value);
-                    updateClock();
-                });
-            }
-            
-            // Add time format change listener
-            if (document.getElementById('setting_time_format')) {
-                document.getElementById('setting_time_format').addEventListener('change', (e) => {
-                    localStorage.setItem('timeFormat', e.target.value);
-                    updateClock();
-                    renderQueue(); // Re-render queue with new format
-                });
-            }
-            
             await loadData();
-            await loadPhoneSettings();
             updateClock();
             setInterval(updateClock, 1000);
             setInterval(renderQueue, 60000); // Update queue every minute for real-time advancement
@@ -1304,123 +1101,26 @@
         }
 
 
-        // Cross-promotion schedules - supporting platforms drive traffic to main platform
-        const CROSS_PROMO = {
-            onlyfans_support: {
-                snapchat: [{type: 'Story', time: '12:00'}],
-                instagram: [{type: 'Story', time: '10:00'}],
-                tiktok: [{type: 'Video', time: '11:00'}],
-                twitter: [{type: 'Tweet', time: '09:00'}],
-                reddit: [{type: 'Post', time: '10:00'}],
-                linkedin: [{type: 'Post', time: '09:00'}],
-                youtube: [{type: 'Short', time: '11:00'}],
-                pinterest: [{type: 'Pin', time: '10:00'}],
-                threads: [{type: 'Post', time: '12:00'}],
-                onlyfans: [{type: 'Post', time: '20:00'}, {type: 'Story', time: '21:00'}],
-                fansly: [{type: 'Post', time: '20:00'}, {type: 'Story', time: '21:00'}]
-            },
-            tiktok_support: {
-                snapchat: [{type: 'Story', time: '12:00'}],
-                instagram: {
-                    monday: [{type: 'Feed Post', time: '11:00'}, {type: 'Story', time: '09:00'}, {type: 'Story', time: '14:00'}, {type: 'Story', time: '19:00'}],
-                    tuesday: [{type: 'Story', time: '09:00'}, {type: 'Story', time: '14:00'}, {type: 'Story', time: '19:00'}],
-                    wednesday: [{type: 'Reel', time: '19:00'}, {type: 'Story', time: '09:00'}, {type: 'Story', time: '14:00'}, {type: 'Story', time: '19:00'}],
-                    thursday: [{type: 'Story', time: '09:00'}, {type: 'Story', time: '14:00'}, {type: 'Story', time: '19:00'}],
-                    friday: [{type: 'Feed Post', time: '11:00'}, {type: 'Reel', time: '19:00'}, {type: 'Story', time: '09:00'}, {type: 'Story', time: '14:00'}, {type: 'Story', time: '19:00'}],
-                    saturday: [{type: 'Story', time: '09:00'}, {type: 'Story', time: '14:00'}, {type: 'Story', time: '19:00'}],
-                    sunday: [{type: 'Story', time: '09:00'}, {type: 'Story', time: '14:00'}, {type: 'Story', time: '19:00'}]
-                },
-                twitter: [{type: 'Tweet', time: '11:30'}],
-                reddit: [{type: 'Post', time: '14:00'}],
-                linkedin: [{type: 'Post', time: '09:00'}],
-                youtube: [{type: 'Short', time: '12:00'}],
-                pinterest: [{type: 'Pin', time: '11:00'}],
-                threads: [{type: 'Post', time: '12:00'}],
-                onlyfans: [{type: 'Post', time: '20:00'}, {type: 'Story', time: '21:00'}],
-                fansly: [{type: 'Post', time: '20:00'}, {type: 'Story', time: '21:00'}]
-            },
-            fansly_support: {
-                snapchat: [{type: 'Story', time: '12:00'}],
-                instagram: [{type: 'Story', time: '10:00'}],
-                tiktok: [{type: 'Video', time: '11:00'}],
-                twitter: [{type: 'Tweet', time: '09:00'}],
-                reddit: [{type: 'Post', time: '14:00'}],
-                linkedin: [{type: 'Post', time: '09:00'}],
-                youtube: [{type: 'Short', time: '12:00'}],
-                pinterest: [{type: 'Pin', time: '10:00'}],
-                threads: [{type: 'Post', time: '12:00'}],
-                onlyfans: [{type: 'Post', time: '20:00'}, {type: 'Story', time: '21:00'}],
-                fansly: [{type: 'Post', time: '20:00'}, {type: 'Story', time: '21:00'}]
-            },
-            instagram_support: {
-                snapchat: [{type: 'Story', time: '12:00'}],
-                tiktok: [{type: 'Video', time: '11:00'}],
-                twitter: [{type: 'Tweet', time: '11:00'}],
-                reddit: [{type: 'Post', time: '14:00'}],
-                linkedin: [{type: 'Post', time: '09:00'}],
-                youtube: [{type: 'Short', time: '12:00'}],
-                pinterest: [{type: 'Pin', time: '10:00'}],
-                threads: [{type: 'Post', time: '12:00'}],
-                onlyfans: [{type: 'Post', time: '20:00'}, {type: 'Story', time: '21:00'}],
-                fansly: [{type: 'Post', time: '20:00'}, {type: 'Story', time: '21:00'}]
+        function showTemplateDescription() {
+            const templateId = document.getElementById('templateSelect').value;
+            const descBox = document.getElementById('templateDescription');
+            
+            if (!templateId || !TEMPLATES[templateId]) {
+                descBox.style.display = 'none';
+                return;
             }
-        };
+            
+            const template = TEMPLATES[templateId];
+            document.getElementById('templateDescTitle').textContent = template.name;
+            document.getElementById('templateDescText').textContent = template.description || 'Custom posting schedule';
+            
+            // Show which platforms this template uses
+            const platformNames = template.platforms.map(p => PLATFORM_NAMES[p]).join(', ');
+            document.getElementById('templateDescPlatforms').textContent = `Platforms: ${platformNames}`;
+            
+            descBox.style.display = 'block';
+        }
 
-        // Base schedules for each platform (default posting times, NO LIVE)
-        const BASE_SCHEDULES = {
-            instagram: {
-                monday: [
-                    {type: 'Feed Post', time: '11:00'},
-                    {type: 'Story', time: '09:00'},
-                    {type: 'Story', time: '14:00'},
-                    {type: 'Story', time: '19:00'}
-                ],
-                tuesday: [
-                    {type: 'Story', time: '09:00'},
-                    {type: 'Story', time: '14:00'},
-                    {type: 'Story', time: '19:00'}
-                ],
-                wednesday: [
-                    {type: 'Reel', time: '19:00'},
-                    {type: 'Story', time: '09:00'},
-                    {type: 'Story', time: '14:00'},
-                    {type: 'Story', time: '19:00'}
-                ],
-                thursday: [
-                    {type: 'Story', time: '09:00'},
-                    {type: 'Story', time: '14:00'},
-                    {type: 'Story', time: '19:00'}
-                ],
-                friday: [
-                    {type: 'Feed Post', time: '11:00'},
-                    {type: 'Reel', time: '19:00'},
-                    {type: 'Story', time: '09:00'},
-                    {type: 'Story', time: '14:00'},
-                    {type: 'Story', time: '19:00'}
-                ],
-                saturday: [
-                    {type: 'Story', time: '09:00'},
-                    {type: 'Story', time: '14:00'},
-                    {type: 'Story', time: '19:00'}
-                ],
-                sunday: [
-                    {type: 'Story', time: '09:00'},
-                    {type: 'Story', time: '14:00'},
-                    {type: 'Story', time: '19:00'}
-                ]
-            },
-            snapchat: [{type: 'Story', time: '09:00'}, {type: 'Story', time: '12:00'}, {type: 'Story', time: '18:00'}, {type: 'Story', time: '20:00'}],
-            tiktok: [{type: 'Video', time: '14:00'}, {type: 'Video', time: '18:00'}],
-            twitter: [{type: 'Tweet', time: '09:00'}, {type: 'Tweet', time: '12:00'}, {type: 'Tweet', time: '15:00'}, {type: 'Tweet', time: '18:00'}, {type: 'Tweet', time: '21:00'}],
-            reddit: [{type: 'Post', time: '10:00'}, {type: 'Post', time: '14:00'}],
-            linkedin: [{type: 'Post', time: '09:00'}],
-            youtube: [{type: 'Short', time: '11:00'}, {type: 'Video', time: '18:00'}],
-            pinterest: [{type: 'Pin', time: '10:00'}, {type: 'Pin', time: '20:00'}],
-            threads: [{type: 'Post', time: '12:00'}, {type: 'Post', time: '17:00'}],
-            onlyfans: [{type: 'Post', time: '20:00'}, {type: 'Story', time: '21:00'}],
-            fansly: [{type: 'Post', time: '20:00'}, {type: 'Story', time: '21:00'}],
-            filming: [{type: 'Content Creation', time: '10:00'}, {type: 'Content Creation', time: '14:00'}]
-        };
         async function applyTemplate() {
             const templateId = document.getElementById('templateSelect').value;
             if (!templateId) {
@@ -1428,225 +1128,43 @@
                 return;
             }
             
-            const template = TEMPLATES[templateId];
-            if (!template) {
-                alert('Template not found!');
+            // Check if user has selected any platforms
+            if (enabledPlatforms.length === 0) {
+                alert('Please select at least one platform from the checkboxes above');
                 return;
             }
             
-            // Declare mainPlatform once for entire function
-            let mainPlatform;
-            let autoEnableLive = false;
+            const template = TEMPLATES[templateId];
+            if (!template) return;
             
-            // ALWAYS determine template settings (not just when empty)
-            if (templateId === 'of_creator_high') {
-                mainPlatform = 'onlyfans';
-                autoEnableLive = true;
-            } else if (templateId === 'of_creator_medium') {
-                mainPlatform = 'onlyfans';
-                autoEnableLive = false;
-            } else if (templateId === 'fansly_creator') {
-                mainPlatform = 'fansly';
-                autoEnableLive = true;
-            } else if (templateId === 'instagram_influencer') {
-                mainPlatform = 'instagram';
-                autoEnableLive = true;
-            } else if (templateId === 'tiktok_creator') {
-                mainPlatform = 'tiktok';
-                autoEnableLive = true;
-            } else if (templateId === 'multi_platform') {
-                mainPlatform = null;
-            } else {
-                mainPlatform = 'onlyfans';
+            if (!confirm(`Apply "${template.name}" template to selected platforms? This will replace your current weekly schedule.`)) {
+                return;
             }
             
-            // ALWAYS ensure main platform is checked for this template
-            if (mainPlatform && !enabledPlatforms.includes(mainPlatform)) {
-                enabledPlatforms.push(mainPlatform);
-                updatePlatformCheckboxes();
-            }
-            
-            // ALWAYS manage LIVE checkbox for the main platform
-            if (mainPlatform) {
-                const liveCheckbox = document.getElementById('live_' + mainPlatform);
-                if (liveCheckbox) {
-                    liveCheckbox.checked = autoEnableLive;
-                    toggleLiveFreq(mainPlatform);
-                }
-            }
-            
-            // Clear old tasks
-            weeklyTasks = {};
-            DAYS.forEach(day => weeklyTasks[day] = []);
-            
-            // Identify main platform from template (reuse if already set)
-            if (!mainPlatform) {
-                // Special handling for Fansly Creator (has fansly + onlyfans)
-            if (templateId === 'fansly_creator') {
-                mainPlatform = 'fansly';
-            }
-            // For focused templates (1-2 platforms), use the template's focus
-            else if (template.platforms.length <= 2) {
-                mainPlatform = template.platforms.find(p => enabledPlatforms.includes(p));
-            }
-            // Multi-platform template - no main, just apply all
-                else {
-                    mainPlatform = null;
-                }
-            }
-            
-            const supportingPlatforms = enabledPlatforms.filter(p => !template.platforms.includes(p));
-            
-            let message = `Apply "${template.name}" template?`;
-            if (mainPlatform) {
-                message += `\n\nMain: ${PLATFORM_NAMES[mainPlatform]}`;
-                if (supportingPlatforms.length > 0) {
-                    const supportNames = supportingPlatforms.map(p => PLATFORM_NAMES[p]).join(', ');
-                    message += `\nSupporting: ${supportNames} (auto cross-promotion)`;
-                }
-            } else {
-                // Multi-platform balanced
-                const selectedNames = enabledPlatforms.map(p => PLATFORM_NAMES[p]).join(', ');
-                message += `\n\nPlatforms: ${selectedNames}`;
-            }
-            
-            if (!confirm(message)) return;
-            
-            // Start with template tasks for main platforms
+            // Apply schedule ONLY for enabled platforms (don't overwrite enabledPlatforms!)
             weeklyTasks = {};
             DAYS.forEach(day => {
                 weeklyTasks[day] = template.schedule[day]
                     .filter(task => enabledPlatforms.includes(task.platform))
-                    .map(task => ({...task}));
-            });
-            
-            // Track which platforms already have scheduled content
-            const alreadyScheduledPlatforms = new Set(template.platforms);
-            
-            // Mark supporting platforms as already scheduled (they'll be added below)
-            if (mainPlatform && supportingPlatforms.length > 0) {
-                supportingPlatforms.forEach(p => alreadyScheduledPlatforms.add(p));
-            }
-            
-            // For platforms that are enabled but not already scheduled, add base schedules
-            enabledPlatforms.forEach(platform => {
-                if (!alreadyScheduledPlatforms.has(platform) && BASE_SCHEDULES[platform]) {
-                    if (BASE_SCHEDULES[platform].monday) {
-                        // Weekly schedule (like Instagram)
-                        DAYS.forEach(day => {
-                            if (BASE_SCHEDULES[platform][day]) {
-                                BASE_SCHEDULES[platform][day].forEach(task => {
-                                    weeklyTasks[day].push({platform, type: task.type, time: task.time});
-                                });
-                            }
-                        });
-                    } else {
-                        // Daily schedule (repeat for all days)
-                        DAYS.forEach(day => {
-                            BASE_SCHEDULES[platform].forEach(task => {
-                                weeklyTasks[day].push({platform, type: task.type, time: task.time});
-                            });
-                        });
-                    }
-                }
-            });
-            
-            // Add cross-promotion tasks for supporting platforms (only if focused template)
-            if (mainPlatform && supportingPlatforms.length > 0) {
-                const crossPromoKey = mainPlatform + '_support';
-                if (CROSS_PROMO[crossPromoKey]) {
-                supportingPlatforms.forEach(platform => {
-                    const promoTasks = CROSS_PROMO[crossPromoKey][platform];
-                    if (promoTasks) {
-                        if (promoTasks.monday) {
-                            // Weekly schedule
-                            DAYS.forEach(day => {
-                                if (promoTasks[day]) {
-                                    promoTasks[day].forEach(task => {
-                                        weeklyTasks[day].push({platform, type: task.type, time: task.time});
-                                    });
-                                }
-                            });
-                        } else {
-                            // Daily schedule (repeat for all days)
-                            DAYS.forEach(day => {
-                                promoTasks.forEach(task => {
-                                    weeklyTasks[day].push({platform, type: task.type, time: task.time});
-                                });
-                            });
-                        }
-                    }
-                });
-                }
-            }
-            
-            // Add LIVE tasks if enabled with optimal schedules
-            const liveConfigs = {
-                instagram: { 
-                    standard: [{day: 'monday', time: '19:00'}, {day: 'saturday', time: '19:00'}],
-                    light: [{day: 'saturday', time: '19:00'}],
-                    heavy: ['monday','wednesday','friday','saturday'].map(d => ({day: d, time: '19:00'}))
-                },
-                tiktok: { 
-                    standard: ['monday','tuesday','wednesday','thursday','friday'].map(d => ({day: d, time: '10:00'})),
-                    light: ['monday','wednesday','friday'].map(d => ({day: d, time: '10:00'})),
-                    heavy: ['monday','tuesday','wednesday','thursday','friday','saturday'].map(d => ({day: d, time: '10:00'}))
-                },
-                onlyfans: { 
-                    standard: [{day: 'saturday', time: '20:00'}],
-                    light: [{day: 'saturday', time: '20:00'}],
-                    heavy: [{day: 'friday', time: '20:00'}, {day: 'saturday', time: '20:00'}]
-                },
-                fansly: { 
-                    standard: [{day: 'saturday', time: '20:00'}],
-                    light: [{day: 'saturday', time: '20:00'}],
-                    heavy: [{day: 'friday', time: '20:00'}, {day: 'saturday', time: '20:00'}]
-                }
-            };
-            
-            ['instagram', 'tiktok', 'onlyfans', 'fansly'].forEach(platform => {
-                const liveCheck = document.getElementById('live_' + platform);
-                if (liveCheck && liveCheck.checked && enabledPlatforms.includes(platform)) {
-                    const freq = document.getElementById('freq_live_' + platform)?.value || 'standard';
-                    const schedule = liveConfigs[platform][freq];
-                    schedule.forEach(slot => {
-                        weeklyTasks[slot.day].push({platform, type: 'LIVE', time: slot.time});
-                    });
-                }
+                    .map(task => ({...task})); // Clone to avoid reference issues
             });
             
             await saveData();
             renderWeeklyPlanner();
             renderQueue();
             
-            const totalTasks = Object.values(weeklyTasks).reduce((sum, day) => sum + day.length, 0);
-            alert(`✅ Template applied!\n${totalTasks} tasks/week scheduled across ${enabledPlatforms.length} platforms`);
+            alert('Template applied to selected platforms!');
         }
 
         function updateClock() {
             const now = new Date();
-            const timezone = localStorage.getItem('timezone') || 'America/New_York';
-            const timeFormat = localStorage.getItem('timeFormat') || '12';
-            
             const estTime = now.toLocaleTimeString('en-US', {
-                timeZone: timezone,
+                timeZone: 'America/New_York',
                 hour: 'numeric',
                 minute: '2-digit',
-                hour12: timeFormat === '12'
+                hour12: true
             });
-            
-            const tzAbbr = {
-                'America/New_York': 'EST',
-                'America/Los_Angeles': 'PST',
-                'America/Chicago': 'CST',
-                'America/Denver': 'MST',
-                'Europe/London': 'GMT',
-                'Asia/Bangkok': 'ICT',
-                'Asia/Tokyo': 'JST',
-                'Australia/Sydney': 'AEDT'
-            };
-            
-            document.getElementById('currentTime').textContent = estTime + ' ' + (tzAbbr[timezone] || '');
+            document.getElementById('currentTime').textContent = estTime + ' EST';
         }
 
         function getDateKey() {
@@ -2230,75 +1748,6 @@
         }
 
         init();
-    
-        // SMS notification functions
-        async function loadPhoneSettings() {
-            if (!checkAuth()) return;
-            
-            try {
-                const response = await fetch(`${API_URL}/user/phone`, {
-                    headers: getAuthHeaders()
-                });
-                const data = await response.json();
-                
-                if (data.phone_number) {
-                    document.getElementById('phone_number').value = data.phone_number;
-                }
-                document.getElementById('sms_enabled').checked = data.sms_enabled || false;
-            } catch (e) {
-                console.error('Error loading phone settings:', e);
-            }
-        }
-        
-        async function savePhoneSettings() {
-            if (!checkAuth()) return;
-            
-            const phone = document.getElementById('phone_number').value.trim();
-            const enabled = document.getElementById('sms_enabled').checked;
-            
-            try {
-                const response = await fetch(`${API_URL}/user/phone`, {
-                    method: 'POST',
-                    headers: getAuthHeaders(),
-                    body: JSON.stringify({
-                        phone_number: phone,
-                        sms_enabled: enabled
-                    })
-                });
-                
-                if (response.ok) {
-                    alert('✅ Phone settings saved!');
-                } else {
-                    const error = await response.json();
-                    alert('❌ Error: ' + error.error);
-                }
-            } catch (e) {
-                console.error('Error saving phone:', e);
-                alert('❌ Failed to save phone settings');
-            }
-        }
-        
-        async function testSMS() {
-            if (!checkAuth()) return;
-            
-            try {
-                const response = await fetch(`${API_URL}/sms/test`, {
-                    method: 'POST',
-                    headers: getAuthHeaders()
-                });
-                
-                if (response.ok) {
-                    alert('✅ Test SMS sent! Check your phone.');
-                } else {
-                    const error = await response.json();
-                    alert('❌ Error: ' + error.error);
-                }
-            } catch (e) {
-                console.error('Error sending test SMS:', e);
-                alert('❌ Failed to send test SMS');
-            }
-        }
-        
-</script>
+    </script>
 </body>
 </html>
