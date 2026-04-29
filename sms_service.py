@@ -13,9 +13,10 @@ class SMSService:
         self.auth_token = os.environ.get('TWILIO_AUTH_TOKEN')
         self.phone_number = os.environ.get('TWILIO_PHONE_NUMBER')
         
-        print(f"DEBUG: SID={self.account_sid[:10] if self.account_sid else 'None'}")
-        print(f"DEBUG: Token={'SET' if self.auth_token else 'None'}")
-        print(f"DEBUG: Phone={self.phone_number}")
+        print(f"DEBUG: SID={self.account_sid[:10] if self.account_sid else 'None'}", flush=True)
+        print(f"DEBUG: Token={'SET' if self.auth_token else 'None'}", flush=True)
+        print(f"DEBUG: Phone={self.phone_number}", flush=True)
+        print(f"DEBUG: All env vars: {list(os.environ.keys())[:5]}", flush=True)
         
         if not all([self.account_sid, self.auth_token, self.phone_number]):
             print("⚠️  Twilio credentials not configured")
