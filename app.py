@@ -55,6 +55,11 @@ class User(db.Model):
     subscription_status = db.Column(db.String(20), default='trial')  # trial, active, canceled, past_due
     trial_ends_at = db.Column(db.DateTime)
     
+    # SMS notification settings
+    phone_number = db.Column(db.String(20))  # Format: +1XXXXXXXXXX
+    sms_enabled = db.Column(db.Boolean, default=False)
+    last_sms_sent = db.Column(db.DateTime)  # Prevent spam
+    
     # Relationships
     schedule = db.relationship('Schedule', backref='user', uselist=False, cascade='all, delete-orphan')
     completed_tasks = db.relationship('CompletedTask', backref='user', cascade='all, delete-orphan')
@@ -462,3 +467,68 @@ def init_database():
         return jsonify({'status': 'success', 'message': 'Database tables created!'}), 200
     except Exception as e:
         return jsonify({'status': 'error', 'message': str(e)}), 500
+
+# ============================================================================
+# SMS NOTIFICATION ENDPOINTS
+# ============================================================================
+
+from sms_service import sms_service
+
+@app.route('/api/user/phone', methods=['POST'])
+@jwt_required()
+def update_phone():
+    """Update user phone number and SMS preferences"""
+    user_id = get_jwt_identity()
+    user = User.query.get(user_id)
+    
+    data = request.json
+    phone = data.get('phone_number', '').strip()
+    sms_enabled = data.get('sms_enabled', False)
+    
+    # Validate phone format (basic)
+    if phone and not phone.startswith('+'):
+        return jsonify({'error': 'Phone must start with + (e.g., +1...)'}), 400
+    
+    user.phone_number = phone if phone else None
+    user.sms_enabled = sms_enabled and bool(phone)
+    
+    db.session.commit()
+    
+    return jsonify({
+        'message': 'Phone settings updated',
+        'phone_number': user.phone_number,
+        'sms_enabled': user.sms_enabled
+    })
+
+@app.route('/api/user/phone', methods=['GET'])
+@jwt_required()
+def get_phone():
+    """Get user phone settings"""
+    user_id = get_jwt_identity()
+    user = User.query.get(user_id)
+    
+    return jsonify({
+        'phone_number': user.phone_number,
+        'sms_enabled': user.sms_enabled
+    })
+
+@app.route('/api/sms/test', methods=['POST'])
+@jwt_required()
+def test_sms():
+    """Send test SMS to verify setup"""
+    user_id = get_jwt_identity()
+    user = User.query.get(user_id)
+    
+    if not user.phone_number:
+        return jsonify({'error': 'No phone number configured'}), 400
+    
+    success = sms_service.send_sms(
+        user.phone_number,
+        "🎉 Content Queue SMS notifications are working! You'll get reminders for upcoming posts."
+    )
+    
+    if success:
+        return jsonify({'message': 'Test SMS sent!'})
+    else:
+        return jsonify({'error': 'Failed to send SMS'}), 500
+
