@@ -2302,10 +2302,14 @@
                 });
                 
                 if (response.ok) {
+                    const data = await response.json();
                     alert('✅ Phone settings saved!');
+                    console.log('Saved:', data);
                 } else {
-                    const error = await response.json();
-                    alert('❌ Error: ' + error.error);
+                    const errorData = await response.json().catch(() => ({}));
+                    const errorMsg = errorData.error || errorData.message || response.statusText || 'Unknown error';
+                    alert('❌ Error: ' + errorMsg);
+                    console.error('Save failed:', response.status, errorData);
                 }
             } catch (e) {
                 console.error('Error saving phone:', e);
