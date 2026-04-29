@@ -448,8 +448,30 @@
     <div class="header">
         <div class="app-title">CONTENT QUEUE</div>
         <div class="app-subtitle">v4.0 - Production</div>
-        <div class="current-time" id="currentTime">--:-- -- EST</div>
-        <button onclick="logout()" style="position: absolute; top: 20px; right: 20px; padding: 8px 16px; background: var(--dark); color: white; border: none; border-radius: 8px; font-family: 'Space Mono', monospace; font-size: 12px; cursor: pointer;">Logout</button>
+        <div style="display: flex; align-items: center; justify-content: center; gap: 10px; flex-wrap: wrap;">
+            <div class="current-time" id="currentTime">--:-- -- EST</div>
+            <select id="timezone-selector" style="padding: 5px 8px; border-radius: 6px; border: 2px solid var(--dark); font-family: 'Space Mono', monospace; font-size: 11px; background: white; cursor: pointer;">
+                <option value="America/New_York">EST</option>
+                <option value="America/Los_Angeles">PST</option>
+                <option value="America/Chicago">CST</option>
+                <option value="America/Denver">MST</option>
+                <option value="Europe/London">GMT</option>
+                <option value="Asia/Bangkok">Bangkok</option>
+                <option value="Asia/Tokyo">Tokyo</option>
+                <option value="Australia/Sydney">Sydney</option>
+            </select>
+        </div>
+        <button onclick="logout()" style="position: absolute; top: 20px; right: 20px; padding: 8px 16px; background: var(--dark); color: white; border: none; border-radius: 8px; font-family: 'Space Mono', monospace; font-size: 12px; cursor: pointer; z-index: 100;">Logout</button>
+    <style>
+        @media (max-width: 768px) {
+            .header button[onclick="logout()"] { 
+                top: 10px; 
+                right: 10px; 
+                padding: 6px 12px; 
+                font-size: 11px; 
+            }
+        }
+    </style>
     </div>
 
     <div class="tab-nav">
@@ -505,6 +527,17 @@
         <div style="max-width: 600px; margin: 0 auto;">
             
             <div style="background: white; border: 2px solid var(--dark); border-radius: 16px; padding: 24px; margin-bottom: 24px;">
+                <div style="font-size: 20px; font-weight: 700; margin-bottom: 16px;">Time Preferences</div>
+                <div style="margin-bottom: 24px;">
+                    <label style="display: flex; align-items: center; gap: 12px; padding: 12px; background: var(--cream); border-radius: 10px;">
+                        <span style="font-weight: 600; flex: 1;">Time Format:</span>
+                        <select id="setting_time_format" style="padding: 6px 10px; border-radius: 6px; border: 2px solid var(--dark); font-family: 'Space Mono', monospace; font-size: 12px;">
+                            <option value="12">12-hour (2:00 PM)</option>
+                            <option value="24">24-hour (14:00)</option>
+                        </select>
+                    </label>
+                </div>
+                
                 <div style="font-size: 20px; font-weight: 700; margin-bottom: 16px;">Your Platforms</div>
                 <div style="font-size: 13px; color: #666; margin-bottom: 20px;">Select which platforms you post to</div>
                 
@@ -1131,6 +1164,32 @@
         }
 
         async function init() {
+            // Load and apply time preferences
+            const savedTimeFormat = localStorage.getItem('timeFormat') || '12';
+            const savedTimezone = localStorage.getItem('timezone') || 'America/New_York';
+            
+            if (document.getElementById('setting_time_format')) {
+                document.getElementById('setting_time_format').value = savedTimeFormat;
+            }
+            if (document.getElementById('timezone-selector')) {
+                document.getElementById('timezone-selector').value = savedTimezone;
+                
+                // Add timezone change listener
+                document.getElementById('timezone-selector').addEventListener('change', (e) => {
+                    localStorage.setItem('timezone', e.target.value);
+                    updateClock();
+                });
+            }
+            
+            // Add time format change listener
+            if (document.getElementById('setting_time_format')) {
+                document.getElementById('setting_time_format').addEventListener('change', (e) => {
+                    localStorage.setItem('timeFormat', e.target.value);
+                    updateClock();
+                    renderQueue(); // Re-render queue with new format
+                });
+            }
+            
             await loadData();
             updateClock();
             setInterval(updateClock, 1000);
@@ -1538,13 +1597,28 @@
 
         function updateClock() {
             const now = new Date();
+            const timezone = localStorage.getItem('timezone') || 'America/New_York';
+            const timeFormat = localStorage.getItem('timeFormat') || '12';
+            
             const estTime = now.toLocaleTimeString('en-US', {
-                timeZone: 'America/New_York',
+                timeZone: timezone,
                 hour: 'numeric',
                 minute: '2-digit',
-                hour12: true
+                hour12: timeFormat === '12'
             });
-            document.getElementById('currentTime').textContent = estTime + ' EST';
+            
+            const tzAbbr = {
+                'America/New_York': 'EST',
+                'America/Los_Angeles': 'PST',
+                'America/Chicago': 'CST',
+                'America/Denver': 'MST',
+                'Europe/London': 'GMT',
+                'Asia/Bangkok': 'ICT',
+                'Asia/Tokyo': 'JST',
+                'Australia/Sydney': 'AEDT'
+            };
+            
+            document.getElementById('currentTime').textContent = estTime + ' ' + (tzAbbr[timezone] || '');
         }
 
         function getDateKey() {
