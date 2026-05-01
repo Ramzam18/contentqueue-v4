@@ -532,3 +532,12 @@ def test_sms():
     else:
         return jsonify({'error': 'Failed to send SMS'}), 500
 
+
+# Legal pages
+@app.route('/privacy.html')
+def privacy_policy():
+    return send_file('static/privacy.html')
+
+@app.route('/terms.html')
+def terms_conditions():
+    return send_file('static/terms.html')
